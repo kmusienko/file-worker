@@ -6,10 +6,4 @@ public class PropertiesProvider {
 
     public final String SOURCE_FILENAME = "original";
 
-    public final String BYTE = "B";
-
-    public final String KILOBYTE = "K";
-
-    public final String MEGABYTE = "M";
-
 }

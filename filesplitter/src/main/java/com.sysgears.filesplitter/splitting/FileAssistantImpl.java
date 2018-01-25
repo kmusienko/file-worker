@@ -32,6 +32,7 @@ public class FileAssistantImpl implements FileAssistant {
         for (File file : files) {
             totalSize = totalSize + file.length();
         }
+
         return totalSize;
     }
 }

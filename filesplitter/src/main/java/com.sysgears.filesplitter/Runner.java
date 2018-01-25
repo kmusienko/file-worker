@@ -6,15 +6,16 @@ import com.sysgears.filesplitter.splitting.FileAssistant;
 import com.sysgears.filesplitter.splitting.FileAssistantImpl;
 import com.sysgears.filesplitter.splitting.FileService;
 import com.sysgears.filesplitter.splitting.FileServiceImpl;
+import com.sysgears.filesplitter.splitting.InvalidCommandException;
 import com.sysgears.filesplitter.splitting.TaskTrackerImpl;
 import com.sysgears.filesplitter.splitting.parser.MergeParamParser;
 import com.sysgears.filesplitter.splitting.parser.SplitParamParser;
 import com.sysgears.filesplitter.splitting.provider.PropertiesProvider;
+import com.sysgears.filesplitter.splitting.validator.CommandValidator;
+import com.sysgears.filesplitter.splitting.validator.SplitCommandValidatorImpl;
 import com.sysgears.statistics.TaskTracker;
 
-import java.io.IOException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,7 +25,7 @@ public class Runner {
 
     private PropertiesProvider propertiesProvider = new PropertiesProvider();
 
-    private SplitParamParser splitParamParser = new SplitParamParser(propertiesProvider);
+    private SplitParamParser splitParamParser = new SplitParamParser();
 
     private MergeParamParser mergeParamParser = new MergeParamParser();
 
@@ -34,8 +35,10 @@ public class Runner {
 
     private TaskTracker taskTracker = new TaskTrackerImpl();
 
+    private CommandValidator splitCommandValidator = new SplitCommandValidatorImpl();
+
     private FileService fileService = new FileServiceImpl(fileAssistant, splitParamParser, mergeParamParser,
-            propertiesProvider, fileWorkersPool, statisticsPool, taskTracker);
+            propertiesProvider, fileWorkersPool, statisticsPool, taskTracker, splitCommandValidator);
 
     public void run() {
         CommandExecutor commandExecutor = new CommandExecutorImpl(fileService);
@@ -45,15 +48,13 @@ public class Runner {
             System.out.println("Enter the command:");
             clientInput = scanner.nextLine();
             if (!clientInput.equals("exit")) {
-                //      try {
                 try {
                     commandExecutor.execute(clientInput);
-                } catch (IOException | InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                } catch (InvalidCommandException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (Exception ex) {
+                    System.out.println("Bad command.");
                 }
-//                } catch (Exception ex) {
-//                    System.out.println("Bad command.");
-//                }
             }
 
         }
@@ -61,5 +62,4 @@ public class Runner {
         statisticsPool.shutdown();
 
     }
-
 }

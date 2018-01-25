@@ -1,6 +1,7 @@
 package com.sysgears.filesplitter.command;
 
 import com.sysgears.filesplitter.splitting.FileService;
+import com.sysgears.filesplitter.splitting.InvalidCommandException;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -14,15 +15,17 @@ public class CommandExecutorImpl implements CommandExecutor {
     }
 
     @Override
-    public void execute(final String commandStr) throws IOException, ExecutionException, InterruptedException {
-
+    public void execute(final String commandStr) throws IOException, ExecutionException, InterruptedException,
+            InvalidCommandException {
         String[] args = commandStr.split(" ");
 
-        if (args[0].equals(Commands.SPLIT.getName())) {
-            fileService.split(args);
-
-        } else if (args[0].equals(Commands.MERGE.getName())) {
-            fileService.merge(args);
+        switch (Commands.valueOf(args[0].toUpperCase())) {
+            case SPLIT:
+                fileService.split(args);
+                break;
+            case MERGE:
+                fileService.merge(args);
+                break;
         }
     }
 }

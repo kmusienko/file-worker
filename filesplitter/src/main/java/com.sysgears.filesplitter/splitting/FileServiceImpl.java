@@ -4,6 +4,7 @@ import com.sysgears.filesplitter.splitting.parser.MergeParamParser;
 import com.sysgears.filesplitter.splitting.parser.SplitParamParser;
 import com.sysgears.filesplitter.splitting.provider.PropertiesProvider;
 
+import com.sysgears.filesplitter.splitting.validator.CommandValidator;
 import com.sysgears.statistics.ProgressPrinter;
 import com.sysgears.statistics.TaskTracker;
 import org.apache.commons.io.FilenameUtils;
@@ -33,9 +34,12 @@ public class FileServiceImpl implements FileService {
 
     private TaskTracker taskTracker;
 
+    private CommandValidator splitCommandValidator;
+
     public FileServiceImpl(FileAssistant fileAssistant, SplitParamParser splitParamParser,
                            MergeParamParser mergeParamParser, PropertiesProvider propertiesProvider,
-                           ExecutorService fileWorkersPool, ExecutorService statisticsPool, TaskTracker taskTracker) {
+                           ExecutorService fileWorkersPool, ExecutorService statisticsPool, TaskTracker taskTracker,
+                           CommandValidator splitCommandValidator) {
         this.fileAssistant = fileAssistant;
         this.splitParamParser = splitParamParser;
         this.mergeParamParser = mergeParamParser;
@@ -43,21 +47,22 @@ public class FileServiceImpl implements FileService {
         this.fileWorkersPool = fileWorkersPool;
         this.taskTracker = taskTracker;
         this.statisticsPool = statisticsPool;
+        this.splitCommandValidator = splitCommandValidator;
     }
 
     @Override
-    public void split(String[] args) throws ExecutionException, InterruptedException {
+    public void split(String[] args) throws ExecutionException, InterruptedException, InvalidCommandException {
+        splitCommandValidator.checkCommandValidity(args);
+
         File file = new File(splitParamParser.parsePath(args));
         long partSize = splitParamParser.parseSize(args);
         long fileSize = file.length();
         long numSplits = fileSize / partSize;
         long remainingBytes = fileSize % partSize;
-    //    if (remainingBytes != 0) numSplits = numSplits + 1;
 
         taskTracker.setTotalTasks(fileSize);
 
         List<Future<?>> futures = new ArrayList<>();
-     //   long iterations = remainingBytes == 0 ? numSplits : numSplits - 1;
         for (long i = 0; i < numSplits; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
                     + FilenameUtils.getExtension(file.getName()));
