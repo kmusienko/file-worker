@@ -44,24 +44,32 @@ public class Transfer extends Thread {
             while (randomAccessFromFile.getFilePointer() - fromFileOffset < length) {
                 if (bufferSize >= needToRead) {
                     byte[] buffer = new byte[(int) needToRead];
+                    long startTime = System.currentTimeMillis();
                     randomAccessFromFile.read(buffer);
                     randomAccessToFile.write(buffer);
+                    long endTime = System.currentTimeMillis();
                     taskTracker.addCompletedTasks(needToRead);
                     alreadyRead = alreadyRead + needToRead;
-                    taskTracker.addReportPerSection(Thread.currentThread().getName(), new TaskReport(alreadyRead, length));
-
+                    taskTracker.addReportPerSection(Thread.currentThread().getName(),
+                                                    new TaskReport(alreadyRead, length));
+                    taskTracker.setBufferTasks(needToRead);
+                    taskTracker.setBufferTime(endTime - startTime);
                     // needToRead = 0;
                 } else {
                     byte[] buffer = new byte[bufferSize];
+                    long startTime = System.nanoTime();
                     randomAccessFromFile.read(buffer);
                     randomAccessToFile.write(buffer);
+                    long endTime = System.nanoTime();
+                    long time = endTime - startTime;
                     needToRead = needToRead - bufferSize;
                     taskTracker.addCompletedTasks(bufferSize);
                     alreadyRead = alreadyRead + bufferSize;
-                    taskTracker.addReportPerSection(Thread.currentThread().getName(), new TaskReport(alreadyRead, length));
-
+                    taskTracker.addReportPerSection(Thread.currentThread().getName(),
+                                                    new TaskReport(alreadyRead, length));
+                    taskTracker.setBufferTasks(bufferSize);
+                    taskTracker.setBufferTime(endTime - startTime);
                 }
-
             }
             randomAccessFromFile.close();
             randomAccessToFile.close();

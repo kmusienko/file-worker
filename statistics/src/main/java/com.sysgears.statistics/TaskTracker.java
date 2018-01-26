@@ -18,4 +18,12 @@ public interface TaskTracker {
 
     void addReportPerSection(final String name, final TaskReport taskReport);
 
+    void setBufferTasks(final long buffer);
+
+    void setBufferTime(final long time);
+
+    long getBufferTasks();
+
+    long getBufferTime();
+
 }

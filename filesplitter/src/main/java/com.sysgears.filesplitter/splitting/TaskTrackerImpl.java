@@ -1,5 +1,6 @@
 package com.sysgears.filesplitter.splitting;
 
+import com.sysgears.statistics.BufferSpeed;
 import com.sysgears.statistics.TaskReport;
 import com.sysgears.statistics.TaskTracker;
 
@@ -10,6 +11,7 @@ public class TaskTrackerImpl implements TaskTracker {
 
     private TaskReport taskReport = new TaskReport(0, 0);
     private Map<String, TaskReport> reportsPerSection = new HashMap<>();
+    private BufferSpeed bufferSpeed = new BufferSpeed();
 
     @Override
     public synchronized void addCompletedTasks(final long completedTasks) {
@@ -44,6 +46,22 @@ public class TaskTrackerImpl implements TaskTracker {
     @Override
     public synchronized Map<String, TaskReport> getReportsPerSection() {
         return reportsPerSection;
+    }
+
+    public synchronized void setBufferTasks(final long buffer) {
+        bufferSpeed.setBuffer(buffer);
+    }
+
+    public synchronized void setBufferTime(final long time) {
+        bufferSpeed.setTime(time);
+    }
+
+    public synchronized long getBufferTasks() {
+        return bufferSpeed.getBuffer();
+    }
+
+    public synchronized long getBufferTime() {
+        return bufferSpeed.getTime();
     }
 
 }

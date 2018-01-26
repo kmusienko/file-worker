@@ -25,13 +25,16 @@ public class ProgressPrinter extends Thread {
             long completed = taskTracker.getCompletedTasks();
             long all = taskTracker.getTotalTasks();
             totalProgress = statisticsService.calculateProgress(completed, all);
+            long timeRemaining = statisticsService.calculateTimeRemaining(taskTracker.getBufferTasks(), taskTracker
+                    .getBufferTime(), all - completed);
             Map<String, Integer> progressPerSection = statisticsService
                     .calculateProgressPerSection(taskTracker.getReportsPerSection());
 
             StringBuilder progress = new StringBuilder();
             progress.append("Total progress: ").append(totalProgress).append("%, ");
             progressPerSection.forEach((name, percent) ->
-                    progress.append(name).append(": ").append(percent).append("%, "));
+                                               progress.append(name).append(": ").append(percent).append("%, "));
+            progress.append("Time remaining:" ).append(timeRemaining).append("ms");
 
             System.out.println(progress);
         }

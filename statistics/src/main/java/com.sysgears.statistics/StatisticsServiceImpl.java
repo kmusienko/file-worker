@@ -15,7 +15,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public Map<String, Integer> calculateProgressPerSection(final Map<String, TaskReport> reports) {
         Map<String, Integer> unitProgress = new HashMap<>();
-        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
+        reports.forEach(
+                (id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
         return unitProgress;
+    }
+
+    public long calculateTimeRemaining(final long bufferTasks, final long bufferTime, final long remainingTasks) {
+        return ((remainingTasks * bufferTime) / bufferTasks) / 1_000_000;
     }
 }
