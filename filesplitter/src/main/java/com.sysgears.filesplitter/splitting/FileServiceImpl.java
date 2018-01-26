@@ -36,10 +36,12 @@ public class FileServiceImpl implements FileService {
 
     private CommandValidator splitCommandValidator;
 
+    private CommandValidator mergeCommandValidator;
+
     public FileServiceImpl(FileAssistant fileAssistant, SplitParamParser splitParamParser,
                            MergeParamParser mergeParamParser, PropertiesProvider propertiesProvider,
                            ExecutorService fileWorkersPool, ExecutorService statisticsPool, TaskTracker taskTracker,
-                           CommandValidator splitCommandValidator) {
+                           CommandValidator splitCommandValidator, CommandValidator mergeCommandValidator) {
         this.fileAssistant = fileAssistant;
         this.splitParamParser = splitParamParser;
         this.mergeParamParser = mergeParamParser;
@@ -48,6 +50,7 @@ public class FileServiceImpl implements FileService {
         this.taskTracker = taskTracker;
         this.statisticsPool = statisticsPool;
         this.splitCommandValidator = splitCommandValidator;
+        this.mergeCommandValidator = mergeCommandValidator;
     }
 
     @Override
@@ -65,17 +68,17 @@ public class FileServiceImpl implements FileService {
         List<Future<?>> futures = new ArrayList<>();
         for (long i = 0; i < numSplits; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
-                    + FilenameUtils.getExtension(file.getName()));
+                                             + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileWorkersPool.submit(new Transfer(file, i * partSize, partSize, partFile, 0,
-                    propertiesProvider, taskTracker));
+                                                              propertiesProvider, taskTracker));
             futures.add(f);
         }
         if (remainingBytes > 0) {
             File partFile = new File(file.getParent() + "/parts/" + (numSplits) + "."
-                    + FilenameUtils.getExtension(file.getName()));
+                                             + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileWorkersPool.submit(
                     new Transfer(file, fileSize - remainingBytes, remainingBytes, partFile, 0,
-                            propertiesProvider, taskTracker));
+                                 propertiesProvider, taskTracker));
             futures.add(f);
         }
         Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker));
@@ -90,7 +93,10 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void merge(String[] args) throws IOException, ExecutionException, InterruptedException {
+    public void merge(String[] args)
+            throws IOException, ExecutionException, InterruptedException, InvalidCommandException {
+        mergeCommandValidator.checkCommandValidity(args);
+
         List<File> files = mergeParamParser.parseFiles(args);
         long totalSize = fileAssistant.calculateTotalSize(files);
         taskTracker.setTotalTasks(totalSize);
@@ -101,18 +107,21 @@ public class FileServiceImpl implements FileService {
 
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 
-        long iterations = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 : files.size();
+        long iterations = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 :
+                files.size();
         List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < iterations; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
             Future<?> f = fileWorkersPool.submit(new Transfer(files.get(i), 0, files.get(i).length(), originalFile,
-                    num * files.get(i).length(), propertiesProvider, taskTracker));
+                                                              num * files.get(i).length(), propertiesProvider,
+                                                              taskTracker));
             futures.add(f);
-
         }
         if (iterations == files.size() - 1) {
-            Future<?> f = fileWorkersPool.submit(new Transfer(files.get(files.size() - 1), 0, files.get(files.size() - 1).length(),
-                    originalFile, totalSize - files.get(files.size() - 1).length(), propertiesProvider, taskTracker));
+            Future<?> f = fileWorkersPool.submit(
+                    new Transfer(files.get(files.size() - 1), 0, files.get(files.size() - 1).length(),
+                                 originalFile, totalSize - files.get(files.size() - 1).length(), propertiesProvider,
+                                 taskTracker));
             futures.add(f);
         }
         Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker));

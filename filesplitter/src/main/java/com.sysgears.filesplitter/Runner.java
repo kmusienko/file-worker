@@ -12,6 +12,7 @@ import com.sysgears.filesplitter.splitting.parser.MergeParamParser;
 import com.sysgears.filesplitter.splitting.parser.SplitParamParser;
 import com.sysgears.filesplitter.splitting.provider.PropertiesProvider;
 import com.sysgears.filesplitter.splitting.validator.CommandValidator;
+import com.sysgears.filesplitter.splitting.validator.MergeCommandValidatorImpl;
 import com.sysgears.filesplitter.splitting.validator.SplitCommandValidatorImpl;
 import com.sysgears.statistics.TaskTracker;
 
@@ -37,8 +38,11 @@ public class Runner {
 
     private CommandValidator splitCommandValidator = new SplitCommandValidatorImpl();
 
+    private CommandValidator mergeCommandValidator = new MergeCommandValidatorImpl();
+
     private FileService fileService = new FileServiceImpl(fileAssistant, splitParamParser, mergeParamParser,
-            propertiesProvider, fileWorkersPool, statisticsPool, taskTracker, splitCommandValidator);
+                                                          propertiesProvider, fileWorkersPool, statisticsPool,
+                                                          taskTracker, splitCommandValidator, mergeCommandValidator);
 
     public void run() {
         CommandExecutor commandExecutor = new CommandExecutorImpl(fileService);

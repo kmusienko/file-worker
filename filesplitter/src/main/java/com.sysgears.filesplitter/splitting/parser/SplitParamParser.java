@@ -20,6 +20,4 @@ public class SplitParamParser {
 
         return size;
     }
-
-
 }

@@ -9,14 +9,17 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
 
     @Override
     public void checkCommandValidity(final String[] command) throws InvalidCommandException {
-        if (command.length != 5 || !command[1].equals("-p") || !command[3].equals("-s")) {
-            throw new InvalidCommandException("Invalid command signature.");
-        }
-
+        checkCommandSignature(command);
         checkFileExistence(command);
         checkEmptyFile(command);
         checkCorrectPartSize(command);
+    }
 
+    @Override
+    public void checkCommandSignature(final String[] command) throws InvalidCommandException {
+        if (command.length != 5 || !command[1].equals("-p") || !command[3].equals("-s")) {
+            throw new InvalidCommandException("Invalid command signature.");
+        }
     }
 
     @Override
@@ -55,7 +58,6 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         if (partSize > fileSize || partSize <= 0) {
             throw new InvalidCommandException("Incorrect part size.");
         }
-
     }
 
 }
