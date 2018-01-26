@@ -4,7 +4,8 @@ import org.apache.log4j.Logger;
 
 public class FileSplitterApplication {
 
-    private final static Logger logger = Logger.getLogger(FileSplitterApplication.class);
+    private final static Logger logger = Logger.getRootLogger();
+    private final static Logger fatalLogger = Logger.getLogger("fatal-file");
 
     public static void main(String[] args) {
         logger.info("Main method started.");
@@ -13,6 +14,7 @@ public class FileSplitterApplication {
             logger.debug("Runner object was created.");
             runner.run();
         } catch (Throwable tr) {
+            fatalLogger.fatal("Fatal error." + tr);
             System.out.println("Something went wrong.");
         }
     }

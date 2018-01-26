@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 
 public class Runner {
 
-    private final static Logger logger = Logger.getLogger("errors-file");
+    private final static Logger logger = Logger.getLogger("error-file");
 
     private FileAssistant fileAssistant = new FileAssistantImpl();
 
@@ -58,7 +58,7 @@ public class Runner {
                 try {
                     commandExecutor.execute(clientInput);
                 } catch (InvalidCommandException ex) {
-                    logger.error("Invalid command.", ex);
+                    logger.error("Catched exception.", ex);
                     System.out.println(ex.getMessage());
                 } catch (Exception ex) {
                     System.out.println("Bad command.");
