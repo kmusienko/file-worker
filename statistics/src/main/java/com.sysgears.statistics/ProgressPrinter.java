@@ -34,7 +34,7 @@ public class ProgressPrinter extends Thread {
             progress.append("Total progress: ").append(totalProgress).append("%, ");
             progressPerSection.forEach((name, percent) ->
                                                progress.append(name).append(": ").append(percent).append("%, "));
-            progress.append("Time remaining:" ).append(timeRemaining).append("ms");
+            progress.append("Time remaining: " ).append(timeRemaining).append("ms");
 
             System.out.println(progress);
         }

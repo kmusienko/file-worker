@@ -44,10 +44,10 @@ public class Transfer extends Thread {
             while (randomAccessFromFile.getFilePointer() - fromFileOffset < length) {
                 if (bufferSize >= needToRead) {
                     byte[] buffer = new byte[(int) needToRead];
-                    long startTime = System.currentTimeMillis();
+                    long startTime = System.nanoTime();
                     randomAccessFromFile.read(buffer);
                     randomAccessToFile.write(buffer);
-                    long endTime = System.currentTimeMillis();
+                    long endTime = System.nanoTime();
                     taskTracker.addCompletedTasks(needToRead);
                     alreadyRead = alreadyRead + needToRead;
                     taskTracker.addReportPerSection(Thread.currentThread().getName(),
@@ -61,7 +61,6 @@ public class Transfer extends Thread {
                     randomAccessFromFile.read(buffer);
                     randomAccessToFile.write(buffer);
                     long endTime = System.nanoTime();
-                    long time = endTime - startTime;
                     needToRead = needToRead - bufferSize;
                     taskTracker.addCompletedTasks(bufferSize);
                     alreadyRead = alreadyRead + bufferSize;
@@ -80,5 +79,6 @@ public class Transfer extends Thread {
 //            e.printStackTrace();
 //        }
     }
+
 
 }

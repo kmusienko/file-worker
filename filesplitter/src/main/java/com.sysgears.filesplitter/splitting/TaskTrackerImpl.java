@@ -48,18 +48,22 @@ public class TaskTrackerImpl implements TaskTracker {
         return reportsPerSection;
     }
 
+    @Override
     public synchronized void setBufferTasks(final long buffer) {
         bufferSpeed.setBuffer(buffer);
     }
 
+    @Override
     public synchronized void setBufferTime(final long time) {
         bufferSpeed.setTime(time);
     }
 
+    @Override
     public synchronized long getBufferTasks() {
         return bufferSpeed.getBuffer();
     }
 
+    @Override
     public synchronized long getBufferTime() {
         return bufferSpeed.getTime();
     }
