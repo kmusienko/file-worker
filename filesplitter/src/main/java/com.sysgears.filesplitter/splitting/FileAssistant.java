@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FileAssistant {
 
-    File createFile(String filePath, long size) throws IOException;
+    File createFile(final String filePath, final long size) throws IOException;
 
-    long calculateTotalSize(List<File> files);
+    long calculateTotalSize(final List<File> files);
 }

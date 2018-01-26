@@ -54,7 +54,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void split(String[] args) throws ExecutionException, InterruptedException, InvalidCommandException {
+    public void split(final String[] args) throws ExecutionException, InterruptedException, InvalidCommandException {
         splitCommandValidator.checkCommandValidity(args);
 
         File file = new File(splitParamParser.parsePath(args));
@@ -93,7 +93,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void merge(String[] args)
+    public void merge(final String[] args)
             throws IOException, ExecutionException, InterruptedException, InvalidCommandException {
         mergeCommandValidator.checkCommandValidity(args);
 

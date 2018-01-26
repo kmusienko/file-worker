@@ -12,22 +12,22 @@ public class TaskTrackerImpl implements TaskTracker {
     private Map<String, TaskReport> reportsPerSection = new HashMap<>();
 
     @Override
-    public synchronized void addCompletedTasks(long completedTasks) {
+    public synchronized void addCompletedTasks(final long completedTasks) {
         taskReport.addCompletedTasks(completedTasks);
     }
 
     @Override
-    public synchronized void addReportPerSection(String name, TaskReport taskReport) {
+    public synchronized void addReportPerSection(final String name, final TaskReport taskReport) {
         this.reportsPerSection.put(name, taskReport);
     }
 
     @Override
-    public synchronized void setTotalTasks(long totalTasks) {
+    public synchronized void setTotalTasks(final long totalTasks) {
         taskReport.setTotal(totalTasks);
     }
 
     @Override
-    public synchronized void setCompletedTasks(long completedTasks) {
+    public synchronized void setCompletedTasks(final long completedTasks) {
         taskReport.setCompleted(completedTasks);
     }
 

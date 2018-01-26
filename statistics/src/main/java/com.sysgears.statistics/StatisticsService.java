@@ -4,8 +4,8 @@ import java.util.Map;
 
 public interface StatisticsService {
 
-    int calculateProgress(long completedTasks, long allTasks);
+    int calculateProgress(final long completedTasks, final long allTasks);
 
-    Map<String, Integer> calculateProgressPerSection(Map<String, TaskReport> reports);
+    Map<String, Integer> calculateProgressPerSection(final Map<String, TaskReport> reports);
 
 }

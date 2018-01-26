@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MergeParamParser {
 
-    public List<File> parseFiles(String[] args) throws FileNotFoundException {
+    public List<File> parseFiles(final String[] args) throws FileNotFoundException {
         String pathDirectory = args[2];
         File directory = new File(pathDirectory);
         File[] files = directory.listFiles();

@@ -10,12 +10,12 @@ public interface TaskTracker {
 
     Map<String, TaskReport> getReportsPerSection();
 
-    void addCompletedTasks(long completedTasks);
+    void addCompletedTasks(final long completedTasks);
 
-    void setTotalTasks(long totalTasks);
+    void setTotalTasks(final long totalTasks);
 
-    void setCompletedTasks(long completedTasks);
+    void setCompletedTasks(final long completedTasks);
 
-    void addReportPerSection(String name, TaskReport taskReport);
+    void addReportPerSection(final String name, final TaskReport taskReport);
 
 }

@@ -5,7 +5,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface FileService {
 
-    void split(String[] args) throws ExecutionException, InterruptedException, InvalidCommandException;
+    void split(final String[] args) throws ExecutionException, InterruptedException, InvalidCommandException;
 
-    void merge(String[] args) throws IOException, ExecutionException, InterruptedException, InvalidCommandException;
+    void merge(final String[] args) throws IOException, ExecutionException, InterruptedException,
+            InvalidCommandException;
 }

@@ -4,11 +4,11 @@ import com.sysgears.filesplitter.splitting.InvalidCommandException;
 
 public interface MergeCommandValidator extends CommandValidator {
 
-    void checkCommandSignature(String[] command) throws InvalidCommandException;
+    void checkCommandSignature(final String[] command) throws InvalidCommandException;
 
-    void checkDirectoryExistence(String[] command) throws InvalidCommandException;
+    void checkDirectoryExistence(final String[] command) throws InvalidCommandException;
 
-    void checkEmptyDirectory(String[] command) throws InvalidCommandException;
+    void checkEmptyDirectory(final String[] command) throws InvalidCommandException;
 
 
 }

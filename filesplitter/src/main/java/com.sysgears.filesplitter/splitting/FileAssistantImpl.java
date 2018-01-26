@@ -8,7 +8,7 @@ import java.util.List;
 public class FileAssistantImpl implements FileAssistant {
 
     @Override
-    public File createFile(String filePath, long size) throws IOException {
+    public File createFile(final String filePath, final long size) throws IOException {
         File file = new File(filePath);
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
         long restToRead = size;
@@ -27,7 +27,7 @@ public class FileAssistantImpl implements FileAssistant {
     }
 
     @Override
-    public long calculateTotalSize(List<File> files) {
+    public long calculateTotalSize(final List<File> files) {
         long totalSize = 0;
         for (File file : files) {
             totalSize = totalSize + file.length();
