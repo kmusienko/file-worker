@@ -15,12 +15,15 @@ import com.sysgears.filesplitter.splitting.validator.CommandValidator;
 import com.sysgears.filesplitter.splitting.validator.MergeCommandValidatorImpl;
 import com.sysgears.filesplitter.splitting.validator.SplitCommandValidatorImpl;
 import com.sysgears.statistics.TaskTracker;
+import org.apache.log4j.Logger;
 
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Runner {
+
+    private final static Logger logger = Logger.getLogger("errors-file");
 
     private FileAssistant fileAssistant = new FileAssistantImpl();
 
@@ -55,6 +58,7 @@ public class Runner {
                 try {
                     commandExecutor.execute(clientInput);
                 } catch (InvalidCommandException ex) {
+                    logger.error("Invalid command.", ex);
                     System.out.println(ex.getMessage());
                 } catch (Exception ex) {
                     System.out.println("Bad command.");
