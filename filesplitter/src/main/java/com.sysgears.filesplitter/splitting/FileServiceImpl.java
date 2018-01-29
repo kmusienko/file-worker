@@ -81,8 +81,7 @@ public class FileServiceImpl implements FileService {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
                                              + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileWorkersPool.submit(new Transfer(file, i * partSize, partSize, partFile, 0,
-                                                              propertiesProvider, taskTracker, Arrays
-                                                                      .toString(args)));
+                                                              propertiesProvider, taskTracker));
             futures.add(f);
         }
         if (remainingBytes > 0) {
@@ -92,7 +91,7 @@ public class FileServiceImpl implements FileService {
                                              + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileWorkersPool.submit(
                     new Transfer(file, fileSize - remainingBytes, remainingBytes, partFile, 0,
-                                 propertiesProvider, taskTracker, Arrays.toString(args)));
+                                 propertiesProvider, taskTracker));
             futures.add(f);
         }
 
@@ -116,11 +115,9 @@ public class FileServiceImpl implements FileService {
         mergeCommandValidator.checkCommandValidity(args);
 
         List<File> files = mergeParamParser.parseFiles(args);
-        logger.debug(
-                "Calculating total size of files in the specified directory.\nUser command: " + Arrays.toString(args));
+        logger.debug("Calculating total size of files.\nUser command: " + Arrays.toString(args));
         long totalSize = fileAssistant.calculateTotalSize(files);
-        logger.debug("Total size of files in the specified directory: " + totalSize + " User command: "
-                             + Arrays.toString(args));
+        logger.debug("Total size of files: " + totalSize + " User command: " + Arrays.toString(args));
         taskTracker.setTotalTasks(totalSize);
         logger.debug("Set total tasks: " + totalSize + ".\nUser command: " + Arrays.toString(args));
 
@@ -143,14 +140,14 @@ public class FileServiceImpl implements FileService {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
             Future<?> f = fileWorkersPool.submit(new Transfer(files.get(i), 0, files.get(i).length(), originalFile,
                                                               num * files.get(i).length(), propertiesProvider,
-                                                              taskTracker, Arrays.toString(args)));
+                                                              taskTracker));
             futures.add(f);
         }
         if (iterations == files.size() - 1) {
             Future<?> f = fileWorkersPool.submit(
                     new Transfer(files.get(files.size() - 1), 0, files.get(files.size() - 1).length(),
                                  originalFile, totalSize - files.get(files.size() - 1).length(), propertiesProvider,
-                                 taskTracker, Arrays.toString(args)));
+                                 taskTracker));
             futures.add(f);
         }
         logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool.\nUser command: "
