@@ -2,15 +2,23 @@ package com.sysgears.filesplitter.command;
 
 import com.sysgears.filesplitter.splitting.FileService;
 import com.sysgears.filesplitter.splitting.InvalidCommandException;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class CommandExecutorImpl implements CommandExecutor {
 
+    private Logger logger;
+
+    private Logger errorLogger;
+
     private FileService fileService;
 
-    public CommandExecutorImpl(FileService fileService) {
+    public CommandExecutorImpl(final Logger logger, final Logger errorLogger, final FileService fileService) {
+        this.logger = logger;
+        this.errorLogger = errorLogger;
         this.fileService = fileService;
     }
 
@@ -18,12 +26,15 @@ public class CommandExecutorImpl implements CommandExecutor {
     public void execute(final String commandStr) throws IOException, ExecutionException, InterruptedException,
             InvalidCommandException {
         String[] args = commandStr.split(" ");
-
+        logger.debug("Splitted command: " + Arrays.toString(args));
+//        logger.debug("Determining input command.");
         switch (Commands.valueOf(args[0].toUpperCase())) {
             case SPLIT:
+                logger.debug("Executing split command: " + commandStr);
                 fileService.split(args);
                 break;
             case MERGE:
+                logger.debug("Executing merge command: " + commandStr);
                 fileService.merge(args);
                 break;
         }

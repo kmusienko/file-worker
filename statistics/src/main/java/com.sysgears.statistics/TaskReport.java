@@ -30,4 +30,11 @@ public class TaskReport {
         this.completed = this.completed + completed;
     }
 
+    @Override
+    public String toString() {
+        return "TaskReport{" +
+                "completed=" + completed +
+                ", total=" + total +
+                '}';
+    }
 }

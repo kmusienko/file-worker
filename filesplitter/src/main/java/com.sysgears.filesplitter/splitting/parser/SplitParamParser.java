@@ -1,14 +1,25 @@
 package com.sysgears.filesplitter.splitting.parser;
 
 import com.sysgears.filesplitter.splitting.SizeUnits;
+import org.apache.log4j.Logger;
+
+import java.util.Arrays;
 
 public class SplitParamParser {
 
+    private Logger logger;
+
+    public SplitParamParser(final Logger logger) {
+        this.logger = logger;
+    }
+
     public String parsePath(final String[] args) {
+        logger.debug("Parsing entered file path.\nUser command: " + Arrays.toString(args));
         return args[2];
     }
 
     public long parseSize(final String[] args) {
+        logger.debug("Parsing entered size.\nUser command: " + Arrays.toString(args));
         String sizeStr = args[4];
         long size = 0;
         for (SizeUnits sizeUnit : SizeUnits.values()) {
@@ -17,6 +28,7 @@ public class SplitParamParser {
                         * sizeUnit.getCoefficient();
             }
         }
+ //       logger.debug("Size: " + size + " bytes.");
 
         return size;
     }
