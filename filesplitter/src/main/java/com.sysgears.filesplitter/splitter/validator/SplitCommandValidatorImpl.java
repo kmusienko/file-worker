@@ -1,7 +1,7 @@
-package com.sysgears.filesplitter.splitting.validator;
+package com.sysgears.filesplitter.splitter.validator;
 
-import com.sysgears.filesplitter.splitting.InvalidCommandException;
-import com.sysgears.filesplitter.splitting.SizeUnits;
+import com.sysgears.filesplitter.splitter.InvalidCommandException;
+import com.sysgears.filesplitter.splitter.SizeUnits;
 import org.apache.log4j.Logger;
 
 import java.io.File;

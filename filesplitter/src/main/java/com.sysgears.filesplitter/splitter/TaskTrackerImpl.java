@@ -1,4 +1,4 @@
-package com.sysgears.filesplitter.splitting;
+package com.sysgears.filesplitter.splitter;
 
 import com.sysgears.statistics.BufferSpeed;
 import com.sysgears.statistics.TaskReport;

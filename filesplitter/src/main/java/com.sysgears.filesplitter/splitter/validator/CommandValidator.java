@@ -1,6 +1,6 @@
-package com.sysgears.filesplitter.splitting.validator;
+package com.sysgears.filesplitter.splitter.validator;
 
-import com.sysgears.filesplitter.splitting.InvalidCommandException;
+import com.sysgears.filesplitter.splitter.InvalidCommandException;
 
 public interface CommandValidator {
 

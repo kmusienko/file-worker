@@ -1,11 +1,10 @@
-package com.sysgears.filesplitter.splitting;
+package com.sysgears.filesplitter.splitter;
 
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 import java.util.List;
 
 public class FileAssistantImpl implements FileAssistant {

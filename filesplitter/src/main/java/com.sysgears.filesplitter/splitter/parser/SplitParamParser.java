@@ -1,6 +1,6 @@
-package com.sysgears.filesplitter.splitting.parser;
+package com.sysgears.filesplitter.splitter.parser;
 
-import com.sysgears.filesplitter.splitting.SizeUnits;
+import com.sysgears.filesplitter.splitter.SizeUnits;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;

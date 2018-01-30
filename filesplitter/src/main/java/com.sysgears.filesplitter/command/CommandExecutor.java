@@ -1,6 +1,6 @@
 package com.sysgears.filesplitter.command;
 
-import com.sysgears.filesplitter.splitting.InvalidCommandException;
+import com.sysgears.filesplitter.splitter.InvalidCommandException;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

@@ -1,4 +1,4 @@
-package com.sysgears.filesplitter.splitting;
+package com.sysgears.filesplitter.splitter;
 
 import java.io.File;
 import java.io.IOException;

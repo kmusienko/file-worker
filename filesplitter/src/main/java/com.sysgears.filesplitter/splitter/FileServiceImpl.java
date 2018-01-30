@@ -1,10 +1,10 @@
-package com.sysgears.filesplitter.splitting;
+package com.sysgears.filesplitter.splitter;
 
-import com.sysgears.filesplitter.splitting.parser.MergeParamParser;
-import com.sysgears.filesplitter.splitting.parser.SplitParamParser;
-import com.sysgears.filesplitter.splitting.provider.PropertiesProvider;
+import com.sysgears.filesplitter.splitter.parser.MergeParamParser;
+import com.sysgears.filesplitter.splitter.parser.SplitParamParser;
+import com.sysgears.filesplitter.splitter.provider.PropertiesProvider;
 
-import com.sysgears.filesplitter.splitting.validator.CommandValidator;
+import com.sysgears.filesplitter.splitter.validator.CommandValidator;
 import com.sysgears.statistics.ProgressPrinter;
 import com.sysgears.statistics.TaskTracker;
 import org.apache.commons.io.FilenameUtils;
@@ -62,105 +62,91 @@ public class FileServiceImpl implements FileService {
     @Override
     public void split(final String[] args) throws ExecutionException, InterruptedException, InvalidCommandException {
         splitCommandValidator.checkCommandValidity(args);
-
+        String userCommandStr = "\nUser command: " + Arrays.toString(args);
         File file = new File(splitParamParser.parsePath(args));
         long partSize = splitParamParser.parseSize(args);
         long fileSize = file.length();
-        logger.debug("Source file size: " + fileSize + " bytes.\nUser command: " + Arrays.toString(args));
         long numSplits = fileSize / partSize;
-        logger.debug("Number of splits: " + numSplits + ".\nUser command: " + Arrays.toString(args));
         long remainingBytes = fileSize % partSize;
-        logger.debug("Remaining bytes: " + remainingBytes + ".\nUser command: " + Arrays.toString(args));
         taskTracker.setTotalTasks(fileSize);
-        logger.debug("Set total tasks: " + fileSize + ".\nUser command: " + Arrays.toString(args));
-
+        logger.debug("Source file size: " + fileSize + " bytes, Number of splits: " + numSplits
+                             + "Remaining bytes:" + remainingBytes + userCommandStr);
         List<Future<?>> futures = new ArrayList<>();
-        logger.info("Splitting. Submitting Transfer objects to the fileWorkersPool.\nUser command: "
-                            + Arrays.toString(args));
+        logger.info("Splitting. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
         for (long i = 0; i < numSplits; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
                                              + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileWorkersPool.submit(new Transfer(file, i * partSize, partSize, partFile, 0,
-                                                              propertiesProvider, taskTracker));
+                                                              propertiesProvider, taskTracker, userCommandStr));
             futures.add(f);
         }
         if (remainingBytes > 0) {
-            logger.debug("Remaining bytes > 0. One additional file will be added.\nUser command: "
-                                 + Arrays.toString(args));
+            logger.debug("Remaining bytes > 0. One additional file will be added." + userCommandStr);
             File partFile = new File(file.getParent() + "/parts/" + (numSplits) + "."
                                              + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileWorkersPool.submit(
                     new Transfer(file, fileSize - remainingBytes, remainingBytes, partFile, 0,
-                                 propertiesProvider, taskTracker));
+                                 propertiesProvider, taskTracker, userCommandStr));
             futures.add(f);
         }
-
-        logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool.\nUser command: "
-                            + Arrays.toString(args));
+        logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool." + userCommandStr);
         Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(args)));
         futures.add(f);
         for (Future<?> future : futures) {
             future.get();
         }
-        logger.debug("Splitting completed.\nUser command: " + Arrays.toString(args));
+        logger.debug("Splitting completed." + userCommandStr);
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
-        logger.debug("Statistics reset.\nUser command: " + Arrays.toString(args));
+        logger.debug("Statistics reset." + userCommandStr);
     }
 
     @Override
     public void merge(final String[] args)
             throws IOException, ExecutionException, InterruptedException, InvalidCommandException {
         mergeCommandValidator.checkCommandValidity(args);
-
+        String userCommandStr = "\nUser command: " + Arrays.toString(args);
         List<File> files = mergeParamParser.parseFiles(args);
-        logger.debug("Calculating total size of files.\nUser command: " + Arrays.toString(args));
         long totalSize = fileAssistant.calculateTotalSize(files);
-        logger.debug("Total size of files: " + totalSize + " User command: " + Arrays.toString(args));
         taskTracker.setTotalTasks(totalSize);
-        logger.debug("Set total tasks: " + totalSize + ".\nUser command: " + Arrays.toString(args));
 
         String originalFilePath = files.get(0).getParent() + "/" + propertiesProvider.SOURCE_FILENAME + "."
                 + FilenameUtils.getExtension(files.get(0).getName());
-        logger.debug("Original file path created: " + originalFilePath + ".\nUser command: " + Arrays.toString(args));
-        logger.debug("Creating original file with path: " + originalFilePath + " and size: " + totalSize
-                             + ".\nUser command: " + Arrays.toString(args));
         File originalFile = fileAssistant.createFile(originalFilePath, totalSize);
+        logger.debug("Created original file with path:" + originalFilePath + " and size:" + totalSize + userCommandStr);
 
-        logger.debug("Sorting files by name.\nUser command: " + Arrays.toString(args));
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
-
+        logger.debug("Files have been sorted by name." + userCommandStr);
         long iterations = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 :
                 files.size();
         List<Future<?>> futures = new ArrayList<>();
-        logger.info("Merging. Submitting Transfer objects to the fileWorkersPool.\nUser command: "
-                            + Arrays.toString(args));
+        logger.info("Merging. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
         for (int i = 0; i < iterations; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
-            Future<?> f = fileWorkersPool.submit(new Transfer(files.get(i), 0, files.get(i).length(), originalFile,
-                                                              num * files.get(i).length(), propertiesProvider,
-                                                              taskTracker));
+            Future<?> f = fileWorkersPool.submit(
+                    new Transfer(files.get(i), 0, files.get(i).length(), originalFile,
+                                 num * files.get(i).length(), propertiesProvider,
+                                 taskTracker, userCommandStr));
             futures.add(f);
         }
         if (iterations == files.size() - 1) {
             Future<?> f = fileWorkersPool.submit(
                     new Transfer(files.get(files.size() - 1), 0, files.get(files.size() - 1).length(),
-                                 originalFile, totalSize - files.get(files.size() - 1).length(), propertiesProvider,
-                                 taskTracker));
+                                 originalFile, totalSize - files.get(files.size() - 1).length(),
+                                 propertiesProvider, taskTracker, userCommandStr));
             futures.add(f);
         }
-        logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool.\nUser command: "
-                            + Arrays.toString(args));
+        logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool." + userCommandStr);
         Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(args)));
         futures.add(f);
         for (Future<?> future : futures) {
             future.get();
         }
-        logger.debug("Merging completed.\nUser command: " + Arrays.toString(args));
+        logger.debug("Merging completed." + userCommandStr);
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
-        logger.debug("Statistics reset.\nUser command: " + Arrays.toString(args));
+        logger.debug("Statistics reset." + userCommandStr);
     }
 }

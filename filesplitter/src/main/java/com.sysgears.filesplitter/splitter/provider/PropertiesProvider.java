@@ -1,4 +1,4 @@
-package com.sysgears.filesplitter.splitting.provider;
+package com.sysgears.filesplitter.splitter.provider;
 
 public class PropertiesProvider {
 

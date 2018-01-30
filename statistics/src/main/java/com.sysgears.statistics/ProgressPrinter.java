@@ -6,6 +6,10 @@ import java.util.Map;
 
 public class ProgressPrinter extends Thread {
 
+    private static final Logger logger = Logger.getLogger("stat-logs");
+
+    private final String threadName = Thread.currentThread().getName();
+
     private StatisticsService statisticsService = new StatisticsServiceImpl();
 
     private TaskTracker taskTracker;
@@ -19,44 +23,41 @@ public class ProgressPrinter extends Thread {
 
     @Override
     public void run() {
-        Logger logger = Logger.getLogger("stat-logs");
-        String userCommand = "User command: " + command;
-        logger.trace("Executing ProgressPrinter's run method." + userCommand);
+        logger.trace("ProgressPrinter started." + this);
         int totalProgress = 0;
-
         while (totalProgress < 100) {
-            logger.trace("Sleeping 400ms." + userCommand);
             try {
-                sleep(400);
+                sleep(800);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
             }
-            logger.trace("Getting completed tasks." + userCommand);
             long completed = taskTracker.getCompletedTasks();
-            logger.trace("Completed tasks: " + completed + "." + userCommand);
-            logger.trace("Getting total tasks." + userCommand);
             long all = taskTracker.getTotalTasks();
-            logger.trace("Total tasks: " + all + "." + userCommand);
-            logger.trace("Calculating total progress." + userCommand);
             totalProgress = statisticsService.calculateProgress(completed, all);
-            logger.trace("Total progress: " + totalProgress + "." + userCommand);
-            logger.trace("Calculating time remaining." + userCommand);
             long timeRemaining = statisticsService.calculateTimeRemaining(taskTracker.getBufferTasks(), taskTracker
                     .getBufferTime(), all - completed);
-            logger.trace("Time remaining: " + timeRemaining + "." + userCommand);
-            logger.trace("Calculating progress per section." + userCommand);
             Map<String, Integer> progressPerSection = statisticsService
                     .calculateProgressPerSection(taskTracker.getReportsPerSection());
-            logger.trace("Progress per section: " + progressPerSection + "." + userCommand);
+            logger.trace("Completed tasks: " + completed + "." + "Total tasks: " + all + "."
+                                 + "Total progress: " + totalProgress + "." + "Time remaining: " + timeRemaining + "."
+                                 + "Progress per section: " + progressPerSection + this);
             StringBuilder progress = new StringBuilder();
-            logger.trace("Building progress string." + userCommand);
             progress.append("Total progress: ").append(totalProgress).append("%, ");
             progressPerSection.forEach((name, percent) ->
                                                progress.append(name).append(": ").append(percent).append("%, "));
             progress.append("Time remaining: ").append(timeRemaining).append("ms");
-            logger.trace("Printing progress." + userCommand);
             System.out.println(progress);
+            logger.trace("Printed progress." + this);
         }
+        logger.trace("ProgressPrinter completed." + this);
+    }
+
+    @Override
+    public String toString() {
+        return "ProgressPrinter{" +
+                "threadName='" + threadName + '\'' +
+                ", command='" + command + '\'' +
+                '}';
     }
 }
 //split -p /home/konstantinmusienko/internship/SplMerge/myVideo.avi -s 10M
