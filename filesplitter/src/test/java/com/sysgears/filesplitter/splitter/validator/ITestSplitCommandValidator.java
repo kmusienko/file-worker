@@ -16,7 +16,7 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.Random;
 
-public class UTestSplitCommandValidator {
+public class ITestSplitCommandValidator {
 
     private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources";
 
@@ -40,7 +40,7 @@ public class UTestSplitCommandValidator {
     public void checkCommandSignature_WrongLength_ExceptionThrown() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String[] command = {"split", "-p"};
 
@@ -53,7 +53,7 @@ public class UTestSplitCommandValidator {
     public void checkCommandSignature_WrongParameters_ExceptionThrown() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String[] command = {"split", "-way", "/home/konstantinmusienko/internship/myVideo.avi", "-s", "10M"};
 
@@ -66,7 +66,7 @@ public class UTestSplitCommandValidator {
     public void checkCommandSignature_ValidCommand_NothingReturn() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String[] command = {"split", "-p", "/home/konstantinmusienko/internship/myVideo.avi", "-s", "10M"};
 
@@ -79,7 +79,7 @@ public class UTestSplitCommandValidator {
     public void checkFileExistence_NonexistentFile_ExceptionThrown() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String nonExistFilePath = resourcePath + "/nonExists.avi";
         String[] command = {"split", "-p", nonExistFilePath, "-s", "10M"};
@@ -93,7 +93,7 @@ public class UTestSplitCommandValidator {
     public void checkFileExistence_ExistingFile_NothingReturn() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String existingFilePath = resourcePath + "/existing.avi";
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(existingFilePath, "rw")) {
@@ -112,7 +112,7 @@ public class UTestSplitCommandValidator {
     public void checkEmptyFile_EmptyFile_ExceptionThrown() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String emptyFilePath = resourcePath + "/empty.avi";
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(emptyFilePath, "rw")) {
@@ -131,7 +131,7 @@ public class UTestSplitCommandValidator {
     public void checkEmptyFile_NonemptyFile_NothingReturn() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String nonemptyFilePath = resourcePath + "/nonempty.avi";
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(nonemptyFilePath, "rw")) {
@@ -150,7 +150,7 @@ public class UTestSplitCommandValidator {
     public void checkCorrectPartSize_UnsupportedUnit_ExceptionThrown() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random random = new Random();
@@ -177,7 +177,7 @@ public class UTestSplitCommandValidator {
     public void checkCorrectPartSize_PartSizeMoreThanTotal_ExceptionThrown() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().times(1);
+        EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
         File file = new File(resourcePath + "/original.avi");
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")) {
@@ -187,6 +187,7 @@ public class UTestSplitCommandValidator {
         }
         String partSize = "1500B";
         String[] command = {"split", "-p", file.getPath(), "-s", partSize};
+        
         //Act
         splitCommandValidator.checkCorrectPartSize(command);
         EasyMock.verify();

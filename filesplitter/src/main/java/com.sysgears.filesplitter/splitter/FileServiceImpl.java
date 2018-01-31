@@ -60,7 +60,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void split(final String[] args) throws ExecutionException, InterruptedException, InvalidCommandException {
+    public List<File> split(final String[] args) throws ExecutionException, InterruptedException,
+            InvalidCommandException {
         splitCommandValidator.checkCommandValidity(args);
         String userCommandStr = "\nUser command: " + Arrays.toString(args);
         File file = new File(splitParamParser.parsePath(args));
@@ -72,6 +73,7 @@ public class FileServiceImpl implements FileService {
         logger.debug("Source file size: " + fileSize + " bytes, Number of splits: " + numSplits
                              + "Remaining bytes:" + remainingBytes + userCommandStr);
         List<Future<?>> futures = new ArrayList<>();
+        List<File> files = new ArrayList<>();
         logger.info("Splitting. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
         for (long i = 0; i < numSplits; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
@@ -79,6 +81,7 @@ public class FileServiceImpl implements FileService {
             Future<?> f = fileWorkersPool.submit(new Transfer(file, i * partSize, partSize, partFile, 0,
                                                               propertiesProvider, taskTracker, userCommandStr));
             futures.add(f);
+            files.add(partFile);
         }
         if (remainingBytes > 0) {
             logger.debug("Remaining bytes > 0. One additional file will be added." + userCommandStr);
@@ -88,6 +91,7 @@ public class FileServiceImpl implements FileService {
                     new Transfer(file, fileSize - remainingBytes, remainingBytes, partFile, 0,
                                  propertiesProvider, taskTracker, userCommandStr));
             futures.add(f);
+            files.add(partFile);
         }
         logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool." + userCommandStr);
         Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(args)));
@@ -100,6 +104,8 @@ public class FileServiceImpl implements FileService {
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
         logger.debug("Statistics reset." + userCommandStr);
+
+        return files;
     }
 
     @Override
