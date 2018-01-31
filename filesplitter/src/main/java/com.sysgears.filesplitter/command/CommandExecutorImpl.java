@@ -27,7 +27,7 @@ public class CommandExecutorImpl implements CommandExecutor {
             InvalidCommandException {
         String[] args = commandStr.split(" ");
         logger.debug("Splitted command: " + Arrays.toString(args));
-//        logger.debug("Determining input command.");
+
         switch (Commands.valueOf(args[0].toUpperCase())) {
             case SPLIT:
                 logger.debug("Executing split command: " + commandStr);

@@ -110,7 +110,6 @@ public class FileServiceImpl implements FileService {
         List<File> files = mergeParamParser.parseFiles(args);
         long totalSize = fileAssistant.calculateTotalSize(files);
         taskTracker.setTotalTasks(totalSize);
-
         String originalFilePath = files.get(0).getParent() + "/" + propertiesProvider.SOURCE_FILENAME + "."
                 + FilenameUtils.getExtension(files.get(0).getName());
         File originalFile = fileAssistant.createFile(originalFilePath, totalSize);

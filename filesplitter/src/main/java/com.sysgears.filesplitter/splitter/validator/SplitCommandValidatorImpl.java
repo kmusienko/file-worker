@@ -27,7 +27,6 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
     public void checkCommandSignature(final String[] command) throws InvalidCommandException {
         logger.debug("Checking command signature.\nUser command: " + Arrays.toString(command));
         if (command.length != 5 || !command[1].equals("-p") || !command[3].equals("-s")) {
-      //      logger.debug("Command signature is invalid. Will be thrown InvalidCommandException.");
             throw new InvalidCommandException("Invalid command signature.");
         }
     }
@@ -37,7 +36,6 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         logger.debug("Checking file existence.\nUser command: " + Arrays.toString(command));
         File file = new File(command[2]);
         if (!file.exists()) {
-      //      logger.debug("Specified file doesn't exists. Will be thrown InvalidCommandException.");
             throw new InvalidCommandException("Specified file doesn't exists.");
         }
     }
@@ -47,7 +45,6 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         logger.debug("Checking if file is empty.\nUser command: " + Arrays.toString(command));
         File file = new File(command[2]);
         if (file.length() == 0) {
-       //     logger.debug("Specified file has zero length. Will be thrown InvalidCommandException.");
             throw new InvalidCommandException("Specified file is empty.");
         }
     }
@@ -57,7 +54,6 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         logger.debug("Checking correct part size.\nUser command: " + Arrays.toString(command));
         File fileToSplit = new File((command[2]));
         String sizeStr = command[4];
- //       logger.debug("Entered part size: " + sizeStr + " User command: " + Arrays.toString(command));
         boolean isCorrectUnit = false;
         SizeUnits specifiedUnit = null;
         for (SizeUnits sizeUnit : SizeUnits.values()) {
@@ -67,16 +63,13 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
             }
         }
         if (!isCorrectUnit) {
-       //     logger.debug("Unsupported size unit. Will be thrown InvalidCommandException.");
             throw new InvalidCommandException("Incorrect part size unit.");
         }
 
         long partSize = Long.parseLong(sizeStr.substring(0, sizeStr.indexOf(String.valueOf(specifiedUnit))))
                 * specifiedUnit.getCoefficient();
         long fileSize = fileToSplit.length();
-   //     logger.debug("Size of source file: " + fileSize + " bytes. User command: " + Arrays.toString(command));
         if (partSize > fileSize || partSize <= 0) {
-        //    logger.debug("Part size is incorrect. Will be thrown InvalidCommandException.");
             throw new InvalidCommandException("Incorrect part size.");
         }
     }
