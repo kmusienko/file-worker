@@ -1,19 +1,11 @@
 package com.sysgears.filesplitter.splitter;
 
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
 
 public class FileAssistantImpl implements FileAssistant {
-
-    private Logger logger;
-
-    public FileAssistantImpl(final Logger logger) {
-        this.logger = logger;
-    }
 
     @Override
     public File createFile(final String filePath, final long size) throws IOException {
@@ -35,12 +27,10 @@ public class FileAssistantImpl implements FileAssistant {
 
     @Override
     public long calculateTotalSize(final List<File> files) {
-//        logger.debug("Calculating total size of files.");
         long totalSize = 0;
         for (File file : files) {
             totalSize = totalSize + file.length();
         }
-//        logger.debug("Total size = " + totalSize);
         return totalSize;
     }
 }

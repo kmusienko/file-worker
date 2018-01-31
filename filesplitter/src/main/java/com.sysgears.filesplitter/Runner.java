@@ -41,7 +41,7 @@ public class Runner {
     }
 
     public void run() {
-        FileAssistant fileAssistant = new FileAssistantImpl(logger);
+        FileAssistant fileAssistant = new FileAssistantImpl();
         SplitParamParser splitParamParser = new SplitParamParser(logger);
         MergeParamParser mergeParamParser = new MergeParamParser(logger);
         CommandValidator splitCommandValidator = new SplitCommandValidatorImpl(logger);
