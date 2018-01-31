@@ -40,7 +40,7 @@ public class UTestFileAssistant {
         File file = fileAssistant.createFile(filePath, size);
 
         //Assert
-        Assert.assertEquals(filePath, file.getPath());
+        Assert.assertEquals(file.getPath(), filePath);
         Assert.assertEquals(file.length(), size);
     }
 
@@ -55,7 +55,7 @@ public class UTestFileAssistant {
         File file = fileAssistant.createFile(filePath, size);
 
         //Assert
-        Assert.assertEquals(filePath, file.getPath());
+        Assert.assertEquals(file.getPath(), filePath);
         Assert.assertEquals(file.length(), expectedSize);
     }
 
