@@ -1,5 +1,8 @@
 package com.sysgears.filesplitter.command;
 
+/**
+ * Available commands.
+ */
 public enum Commands {
 
     SPLIT("split"),

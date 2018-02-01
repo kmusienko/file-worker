@@ -12,16 +12,22 @@ public class CommandExecutorImpl implements CommandExecutor {
 
     private Logger logger;
 
-    private Logger errorLogger;
-
     private FileService fileService;
 
-    public CommandExecutorImpl(final Logger logger, final Logger errorLogger, final FileService fileService) {
+    public CommandExecutorImpl(Logger logger,FileService fileService) {
         this.logger = logger;
-        this.errorLogger = errorLogger;
         this.fileService = fileService;
     }
 
+    /**
+     * Executes the input command.
+     *
+     * @param commandStr command
+     * @throws IOException if an I/O error occurs
+     * @throws ExecutionException if the computation threw an exception
+     * @throws InterruptedException in case of thread interrupting
+     * @throws InvalidCommandException in case of command invalidity
+     */
     @Override
     public void execute(final String commandStr) throws IOException, ExecutionException, InterruptedException,
             InvalidCommandException {

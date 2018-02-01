@@ -7,22 +7,32 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Merge params parser.
+ */
 public class MergeParamParser {
 
+    /**
+     * Root logger.
+     */
     private Logger logger;
 
     public MergeParamParser(final Logger logger) {
         this.logger = logger;
     }
 
-    public List<File> parseFiles(final String[] args) throws FileNotFoundException {
+    /**
+     * Parses files from directory.
+     *
+     * @param args command arguments
+     * @return parsed files
+     */
+    public List<File> parseFiles(final String[] args) {
         logger.debug("Parsing files in the directory path. User command: " + Arrays.toString(args));
         String pathDirectory = args[2];
         File directory = new File(pathDirectory);
         File[] files = directory.listFiles();
-//        if (files == null) {
-//            throw new FileNotFoundException("Empty directory");
-//        }
+
         return Arrays.asList(files);
     }
 }

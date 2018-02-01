@@ -51,7 +51,7 @@ public class Runner {
                                                       taskTracker, splitCommandValidator, mergeCommandValidator,
                                                       logger);
 
-        CommandExecutor commandExecutor = new CommandExecutorImpl(logger, errorLogger, fileService);
+        CommandExecutor commandExecutor = new CommandExecutorImpl(logger, fileService);
         Scanner scanner = new Scanner(System.in);
         String clientInput = "";
         while (!clientInput.equals("exit")) {

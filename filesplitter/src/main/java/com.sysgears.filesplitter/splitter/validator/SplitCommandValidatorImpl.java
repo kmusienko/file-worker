@@ -7,6 +7,9 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.Arrays;
 
+/**
+ * Split command validation tool.
+ */
 public class SplitCommandValidatorImpl implements SplitCommandValidator {
 
     private Logger logger;
@@ -15,6 +18,12 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         this.logger = logger;
     }
 
+    /**
+     * Checks if the command is valid.
+     *
+     * @param command input command
+     * @throws InvalidCommandException in case of command invalidity
+     */
     @Override
     public void checkCommandValidity(final String[] command) throws InvalidCommandException {
         checkCommandSignature(command);
@@ -23,6 +32,12 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         checkCorrectPartSize(command);
     }
 
+    /**
+     * Checks if command signature is valid.
+     *
+     * @param command splitted command
+     * @throws InvalidCommandException in case of command invalidity
+     */
     @Override
     public void checkCommandSignature(final String[] command) throws InvalidCommandException {
         logger.debug("Checking command signature.\nUser command: " + Arrays.toString(command));
@@ -31,6 +46,12 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         }
     }
 
+    /**
+     * Checks if the file exists.
+     *
+     * @param command splitted command
+     * @throws InvalidCommandException in case of command invalidity
+     */
     @Override
     public void checkFileExistence(final String[] command) throws InvalidCommandException {
         logger.debug("Checking file existence.\nUser command: " + Arrays.toString(command));
@@ -40,6 +61,12 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         }
     }
 
+    /**
+     * Checks if the file is empty.
+     *
+     * @param command splitted command
+     * @throws InvalidCommandException in case of command invalidity
+     */
     @Override
     public void checkEmptyFile(final String[] command) throws InvalidCommandException {
         logger.debug("Checking if file is empty.\nUser command: " + Arrays.toString(command));
@@ -49,6 +76,12 @@ public class SplitCommandValidatorImpl implements SplitCommandValidator {
         }
     }
 
+    /**
+     * Checks if the part size is correct.
+     *
+     * @param command splitted command
+     * @throws InvalidCommandException in case of command invalidity
+     */
     @Override
     public void checkCorrectPartSize(final String[] command) throws InvalidCommandException {
         logger.debug("Checking correct part size.\nUser command: " + Arrays.toString(command));
