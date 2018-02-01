@@ -21,25 +21,55 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Tool for interaction with user.
+ */
 public class Runner {
 
+    /**
+     * Root logger.
+     */
     private Logger logger;
 
+    /**
+     * Error logger.
+     */
     private Logger errorLogger;
 
+    /**
+     * Tool for providing file properties.
+     */
     private PropertiesProvider propertiesProvider = new PropertiesProvider();
 
+    /**
+     * File workers thread pool.
+     */
     private ExecutorService fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
+    /**
+     * Statistics thread pool.
+     */
     private ExecutorService statisticsPool = Executors.newFixedThreadPool(1);
 
+    /**
+     * Tool for interaction with the statistics module.
+     */
     private TaskTracker taskTracker = new TaskTrackerImpl();
 
+    /**
+     * Initializes loggers.
+     *
+     * @param logger      root logger
+     * @param errorLogger error logger
+     */
     public Runner(final Logger logger, final Logger errorLogger) {
         this.logger = logger;
         this.errorLogger = errorLogger;
     }
 
+    /**
+     * Interacts with user.
+     */
     public void run() {
         FileAssistant fileAssistant = new FileAssistantImpl();
         SplitParamParser splitParamParser = new SplitParamParser(logger);

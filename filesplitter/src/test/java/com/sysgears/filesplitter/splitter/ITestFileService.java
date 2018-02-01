@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 
 public class ITestFileService {
 
-    private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources";
+    private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";
     private FileService fileService;
 
     @BeforeClass

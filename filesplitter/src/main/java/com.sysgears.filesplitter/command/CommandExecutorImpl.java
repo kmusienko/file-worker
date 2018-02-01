@@ -14,7 +14,7 @@ public class CommandExecutorImpl implements CommandExecutor {
 
     private FileService fileService;
 
-    public CommandExecutorImpl(Logger logger,FileService fileService) {
+    public CommandExecutorImpl(Logger logger, FileService fileService) {
         this.logger = logger;
         this.fileService = fileService;
     }
@@ -23,9 +23,9 @@ public class CommandExecutorImpl implements CommandExecutor {
      * Executes the input command.
      *
      * @param commandStr command
-     * @throws IOException if an I/O error occurs
-     * @throws ExecutionException if the computation threw an exception
-     * @throws InterruptedException in case of thread interrupting
+     * @throws IOException             if an I/O error occurs
+     * @throws ExecutionException      if the computation threw an exception
+     * @throws InterruptedException    in case of thread interrupting
      * @throws InvalidCommandException in case of command invalidity
      */
     @Override

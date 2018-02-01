@@ -1,8 +1,18 @@
 package com.sysgears.statistics;
 
-public class BufferSpeed {
+/**
+ * Represents buffer and time to read and write it.
+ */
+public class BufferTime {
 
+    /**
+     * Buffer of bytes.
+     */
     private long buffer;
+
+    /**
+     * Time to read and write buffer bytes (in nanoseconds).
+     */
     private long timeNanoSec;
 
     public long getBuffer() {

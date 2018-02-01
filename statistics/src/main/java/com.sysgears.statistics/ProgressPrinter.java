@@ -4,23 +4,50 @@ import org.apache.log4j.Logger;
 
 import java.util.Map;
 
+/**
+ * Prints progress of the tasks.
+ */
 public class ProgressPrinter extends Thread {
 
+    /**
+     * Statistics logger.
+     */
     private static final Logger logger = Logger.getLogger("stat-logs");
 
+    /**
+     * Name of the current thread.
+     */
     private final String threadName = Thread.currentThread().getName();
 
+    /**
+     * Statistics service.
+     */
     private StatisticsService statisticsService = new StatisticsServiceImpl();
 
+    /**
+     * Tool for interaction with the statistics module.
+     */
     private TaskTracker taskTracker;
 
+    /**
+     * User command.
+     */
     private String command;
 
+    /**
+     * Initializes taskTracker and command fields.
+     *
+     * @param taskTracker tool for interaction with the statistics module
+     * @param command     user command
+     */
     public ProgressPrinter(TaskTracker taskTracker, String command) {
         this.taskTracker = taskTracker;
         this.command = command;
     }
 
+    /**
+     * Executes ProgressPrinter.
+     */
     @Override
     public void run() {
         logger.trace("ProgressPrinter started." + this);

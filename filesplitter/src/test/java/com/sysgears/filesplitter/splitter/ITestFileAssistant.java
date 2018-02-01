@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ITestFileAssistant {
 
-    private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources";
+    private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";
 
     private FileAssistant fileAssistant;
 

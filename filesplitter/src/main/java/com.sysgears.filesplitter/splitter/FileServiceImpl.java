@@ -22,26 +22,59 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+/**
+ * File service.
+ */
 public class FileServiceImpl implements FileService {
 
+    /**
+     * Root logger.
+     */
     private Logger logger;
 
+    /**
+     * File assistant tool.
+     */
     private FileAssistant fileAssistant;
 
+    /**
+     * Split params parser.
+     */
     private SplitParamParser splitParamParser;
 
+    /**
+     * Merge params parser.
+     */
     private MergeParamParser mergeParamParser;
 
+    /**
+     * Tool for providing file properties.
+     */
     private PropertiesProvider propertiesProvider;
 
+    /**
+     * File workers thread pool.
+     */
     private ExecutorService fileWorkersPool;
 
+    /**
+     * Statistics thread pool.
+     */
     private ExecutorService statisticsPool;
 
+    /**
+     * Interface for interaction with the statistics module.
+     */
     private TaskTracker taskTracker;
 
+    /**
+     * Command validation tool.
+     */
     private CommandValidator splitCommandValidator;
 
+    /**
+     * Command validation tool.
+     */
     private CommandValidator mergeCommandValidator;
 
     public FileServiceImpl(FileAssistant fileAssistant, SplitParamParser splitParamParser,
@@ -61,6 +94,16 @@ public class FileServiceImpl implements FileService {
         this.logger = logger;
     }
 
+    /**
+     * Splits file.
+     *
+     * @param args command arguments
+     * @return list of files
+     * @throws ExecutionException      if the computation threw an exception
+     * @throws InterruptedException    in case of thread interrupting
+     * @throws InvalidCommandException in case of command invalidity
+     * @throws IOException             if an I/O error occurs
+     */
     @Override
     public List<File> split(final String[] args) throws ExecutionException, InterruptedException,
             InvalidCommandException, IOException {
@@ -111,6 +154,16 @@ public class FileServiceImpl implements FileService {
         return files;
     }
 
+    /**
+     * Merges files.
+     *
+     * @param args command arguments
+     * @return merged file
+     * @throws ExecutionException      if the computation threw an exception
+     * @throws InterruptedException    in case of thread interrupting
+     * @throws InvalidCommandException in case of command invalidity
+     * @throws IOException             if an I/O error occurs
+     */
     @Override
     public File merge(final String[] args)
             throws IOException, ExecutionException, InterruptedException, InvalidCommandException {

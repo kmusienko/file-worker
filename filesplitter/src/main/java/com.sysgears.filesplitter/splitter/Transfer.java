@@ -9,19 +9,73 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+/**
+ * Transfers a certain number of bytes from one file to another.
+ */
 public class Transfer extends Thread {
 
+    /**
+     * Root logger.
+     */
     private static final Logger logger = Logger.getLogger("transfer-logs");
+
+    /**
+     * Current thread name.
+     */
     private final String threadName = Thread.currentThread().getName();
+
+    /**
+     * File from which to transfer the bytes.
+     */
     private File fromFile;
+
+    /**
+     * Pointer offset in the file from which to transfer the bytes.
+     */
     private long fromFileOffset;
+
+    /**
+     * Number of bytes to transfer.
+     */
     private long length;
+
+    /**
+     * Transfer destination file.
+     */
     private File toFile;
+
+    /**
+     * Pointer offset in the transfer destination file.
+     */
     private long toFileOffset;
+
+    /**
+     * Tool for providing file properties.
+     */
     private PropertiesProvider propertiesProvider;
+
+    /**
+     * Tool for interaction with the statistics module.
+     */
     private TaskTracker taskTracker;
+
+    /**
+     * User command.
+     */
     private String userCommand;
 
+    /**
+     * Initializes class fields.
+     *
+     * @param fromFile           file from which to transfer the bytes
+     * @param fromFileOffset     pointer offset in the file from which to transfer the bytes
+     * @param length             number of bytes to transfer
+     * @param toFile             transfer destination file
+     * @param toFileOffset       pointer offset in the transfer destination file
+     * @param propertiesProvider tool for providing file properties
+     * @param taskTracker        tool for interaction with the statistics module
+     * @param userCommand        user command
+     */
     public Transfer(File fromFile, long fromFileOffset, long length, File toFile, long toFileOffset,
                     PropertiesProvider propertiesProvider, TaskTracker taskTracker, String userCommand) {
         this.fromFile = fromFile;
@@ -34,6 +88,9 @@ public class Transfer extends Thread {
         this.userCommand = userCommand;
     }
 
+    /**
+     * Executes transfer.
+     */
     @Override
     public void run() {
         logger.trace("Transfer started." + this);
@@ -72,6 +129,15 @@ public class Transfer extends Thread {
         logger.trace("Transfer completed." + this);
     }
 
+    /**
+     * Reading and writing buffer bytes from one file to another.
+     *
+     * @param randomAccessFromFile randomAccessFile
+     * @param randomAccessToFile   randomAccessFile
+     * @param bufferSize           size of buffer
+     * @return spent time in nanoseconds
+     * @throws IOException if an I/O error occurs
+     */
     private long readAndWrite(RandomAccessFile randomAccessFromFile, RandomAccessFile randomAccessToFile,
                               long bufferSize) throws IOException {
         byte[] buffer = new byte[(int) bufferSize];

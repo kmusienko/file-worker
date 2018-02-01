@@ -5,8 +5,19 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
 
+/**
+ * File assistant tool.
+ */
 public class FileAssistantImpl implements FileAssistant {
 
+    /**
+     * Creates file.
+     *
+     * @param filePath file path
+     * @param size     file size
+     * @return created file
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public File createFile(final String filePath, final long size) throws IOException {
         File file = new File(filePath);
@@ -25,6 +36,12 @@ public class FileAssistantImpl implements FileAssistant {
         return file;
     }
 
+    /**
+     * Calculates total size of files.
+     *
+     * @param files list of files
+     * @return total size
+     */
     @Override
     public long calculateTotalSize(final List<File> files) {
         long totalSize = 0;

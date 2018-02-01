@@ -1,10 +1,26 @@
 package com.sysgears.statistics;
 
+/**
+ * Report about completed and total tasks.
+ */
 public class TaskReport {
 
+    /**
+     * Number of completed tasks.
+     */
     private long completed;
+
+    /**
+     * Number of total tasks.
+     */
     private long total;
 
+    /**
+     * Initializes completed and total tasks fields.
+     *
+     * @param completed completed tasks
+     * @param total total tasks
+     */
     public TaskReport(long completed, long total) {
         this.completed = completed;
         this.total = total;
