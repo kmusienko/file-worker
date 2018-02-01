@@ -6,7 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.easymock.EasyMock;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,49 +30,10 @@ public class ITestSplitCommandValidator {
         splitCommandValidator = new SplitCommandValidatorImpl(logger);
     }
 
-    @AfterTest
+    @AfterMethod
     public void clearResources() throws IOException {
         File directory = new File(resourcePath);
         FileUtils.cleanDirectory(directory);
-    }
-
-    @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkCommandSignature_WrongLength_ExceptionThrown() throws InvalidCommandException {
-        //Arrange
-        logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().andVoid();
-        EasyMock.replay();
-        String[] command = {"split", "-p"};
-
-        //Act
-        splitCommandValidator.checkCommandSignature(command);
-        EasyMock.verify();
-    }
-
-    @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkCommandSignature_WrongParameters_ExceptionThrown() throws InvalidCommandException {
-        //Arrange
-        logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().andVoid();
-        EasyMock.replay();
-        String[] command = {"split", "-way", "/home/konstantinmusienko/internship/myVideo.avi", "-s", "10M"};
-
-        //Act
-        splitCommandValidator.checkCommandSignature(command);
-        EasyMock.verify();
-    }
-
-    @Test
-    public void checkCommandSignature_ValidCommand_NothingReturn() throws InvalidCommandException {
-        //Arrange
-        logger.debug(EasyMock.anyString());
-        EasyMock.expectLastCall().andVoid();
-        EasyMock.replay();
-        String[] command = {"split", "-p", "/home/konstantinmusienko/internship/myVideo.avi", "-s", "10M"};
-
-        //Act
-        splitCommandValidator.checkCommandSignature(command);
-        EasyMock.verify();
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
@@ -81,7 +42,7 @@ public class ITestSplitCommandValidator {
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
         EasyMock.replay();
-        String nonExistFilePath = resourcePath + "/nonExists.avi";
+        String nonExistFilePath = resourcePath + "/nonexistent.avi";
         String[] command = {"split", "-p", nonExistFilePath, "-s", "10M"};
 
         //Act

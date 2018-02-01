@@ -7,8 +7,9 @@ import java.util.concurrent.ExecutionException;
 
 public interface FileService {
 
-    List<File> split(final String[] args) throws ExecutionException, InterruptedException, InvalidCommandException;
+    List<File> split(final String[] args)
+            throws ExecutionException, InterruptedException, InvalidCommandException, IOException;
 
-    void merge(final String[] args) throws IOException, ExecutionException, InterruptedException,
+    File merge(final String[] args) throws IOException, ExecutionException, InterruptedException,
             InvalidCommandException;
 }

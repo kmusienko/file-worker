@@ -2,6 +2,7 @@ package com.sysgears.filesplitter.splitter;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -24,7 +25,7 @@ public class ITestFileAssistant {
         fileAssistant = new FileAssistantImpl();
     }
 
-    @AfterTest
+    @AfterMethod
     public void clearResources() throws IOException {
         File directory = new File(resourcePath);
         FileUtils.cleanDirectory(directory);
@@ -66,7 +67,7 @@ public class ITestFileAssistant {
         long size = 50_000;
 
         //Act
-        File file = fileAssistant.createFile(invalidFilePath, size);
+        fileAssistant.createFile(invalidFilePath, size);
     }
 
     @Test
@@ -108,6 +109,5 @@ public class ITestFileAssistant {
 
         //Assert
         Assert.assertEquals(actualTotalSize, expectedTotalSize);
-
     }
 }

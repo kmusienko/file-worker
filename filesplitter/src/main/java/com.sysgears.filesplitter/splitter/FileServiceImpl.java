@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -61,7 +63,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<File> split(final String[] args) throws ExecutionException, InterruptedException,
-            InvalidCommandException {
+            InvalidCommandException, IOException {
         splitCommandValidator.checkCommandValidity(args);
         String userCommandStr = "\nUser command: " + Arrays.toString(args);
         File file = new File(splitParamParser.parsePath(args));
@@ -75,6 +77,7 @@ public class FileServiceImpl implements FileService {
         List<Future<?>> futures = new ArrayList<>();
         List<File> files = new ArrayList<>();
         logger.info("Splitting. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
+        Files.createDirectory(Paths.get(file.getParent() + "/parts"));
         for (long i = 0; i < numSplits; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
                                              + FilenameUtils.getExtension(file.getName()));
@@ -109,7 +112,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void merge(final String[] args)
+    public File merge(final String[] args)
             throws IOException, ExecutionException, InterruptedException, InvalidCommandException {
         mergeCommandValidator.checkCommandValidity(args);
         String userCommandStr = "\nUser command: " + Arrays.toString(args);
@@ -153,5 +156,7 @@ public class FileServiceImpl implements FileService {
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
         logger.debug("Statistics reset." + userCommandStr);
+
+        return originalFile;
     }
 }
