@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Random;
 
+/**
+ * Integration tests for SplitCommandValidator.
+ */
 public class ITestSplitCommandValidator {
 
     private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";

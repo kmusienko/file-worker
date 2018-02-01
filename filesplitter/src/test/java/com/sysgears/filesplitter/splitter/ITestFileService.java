@@ -24,6 +24,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Integration tests for FileService.
+ */
 public class ITestFileService {
 
     private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";

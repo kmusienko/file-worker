@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * Unit tests for SplitCommandValidator.
+ */
 public class UTestSplitCommandValidator {
 
     private SplitCommandValidator splitCommandValidator;

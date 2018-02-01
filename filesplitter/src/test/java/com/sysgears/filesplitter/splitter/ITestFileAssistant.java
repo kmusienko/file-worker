@@ -13,6 +13,9 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Integration tests for FileAssistant.
+ */
 public class ITestFileAssistant {
 
     private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";
