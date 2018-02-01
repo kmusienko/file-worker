@@ -19,7 +19,7 @@ public class UTestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkCommandSignature_WrongLength_ExceptionThrown() throws InvalidCommandException {
+    public void testCheckCommandSignatureIfLengthIsWrong() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -32,7 +32,7 @@ public class UTestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkCommandSignature_WrongParameters_ExceptionThrown() throws InvalidCommandException {
+    public void testCheckCommandSignatureIfParametersAreWrong() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -45,7 +45,7 @@ public class UTestSplitCommandValidator {
     }
 
     @Test
-    public void checkCommandSignature_ValidCommand_NothingReturn() throws InvalidCommandException {
+    public void testCheckCommandSignatureIfCommandIsValid() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
