@@ -32,7 +32,7 @@ public class ITestFileAssistant {
     }
 
     @Test
-    public void createFile_PathAndSize_FileReturned() throws IOException {
+    public void testCreateFile() throws IOException {
         //Arrange
         String filePath = resourcePath + "/testVid.mp4";
         long size = 50_000;
@@ -46,7 +46,7 @@ public class ITestFileAssistant {
     }
 
     @Test
-    public void createFile_NegativeSize_EmptyFileReturned() throws IOException {
+    public void testCreateFileWithNegativeSize() throws IOException {
         //Arrange
         String filePath = resourcePath + "/testVid.mp4";
         long size = -10_000;
@@ -61,7 +61,7 @@ public class ITestFileAssistant {
     }
 
     @Test(expectedExceptions = FileNotFoundException.class)
-    public void createFile_InvalidPath_ExceptionThrown() throws IOException {
+    public void testFailToCreateFileIfPathIsInvalid() throws IOException {
         //Arrange
         String invalidFilePath = resourcePath + "/something/testVid.mp4";
         long size = 50_000;
@@ -71,7 +71,7 @@ public class ITestFileAssistant {
     }
 
     @Test
-    public void calculateTotalSize_ListOfFiles_SizeReturned() throws IOException {
+    public void testCalculateTotalSize() throws IOException {
         //Arrange
         List<File> files = new ArrayList<>();
         final long fileSize = 4_000;
@@ -92,7 +92,7 @@ public class ITestFileAssistant {
     }
 
     @Test
-    public void calculateTotalSize_EmptyFiles_ZeroReturned() throws IOException {
+    public void testCalculateTotalSizeOfEmptyFiles() throws IOException {
         //Arrange
         List<File> files = new ArrayList<>();
         final long fileSize = 0;

@@ -37,7 +37,7 @@ public class ITestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkFileExistence_NonexistentFile_ExceptionThrown() throws InvalidCommandException {
+    public void testCheckFileExistenceIfFileNotExist() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -51,7 +51,7 @@ public class ITestSplitCommandValidator {
     }
 
     @Test
-    public void checkFileExistence_ExistingFile_NothingReturn() throws InvalidCommandException {
+    public void testCheckFileExistenceIfFileExists() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -70,7 +70,7 @@ public class ITestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkEmptyFile_EmptyFile_ExceptionThrown() throws InvalidCommandException {
+    public void testCheckEmptyFileIfFileIsEmpty() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -89,7 +89,7 @@ public class ITestSplitCommandValidator {
     }
 
     @Test
-    public void checkEmptyFile_NonemptyFile_NothingReturn() throws InvalidCommandException {
+    public void testCheckEmptyFileIfFileIsNotEmpty() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -108,7 +108,7 @@ public class ITestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkCorrectPartSize_UnsupportedUnit_ExceptionThrown() throws InvalidCommandException {
+    public void testCheckCorrectPartSizeIfUnitIsUnsupported() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -135,7 +135,7 @@ public class ITestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void checkCorrectPartSize_PartSizeMoreThanTotal_ExceptionThrown() throws InvalidCommandException {
+    public void testCheckCorrectPartSizeIfPartSizeMoreThanTotal() throws InvalidCommandException {
         //Arrange
         logger.debug(EasyMock.anyString());
         EasyMock.expectLastCall().andVoid();
@@ -153,7 +153,6 @@ public class ITestSplitCommandValidator {
         splitCommandValidator.checkCorrectPartSize(command);
         EasyMock.verify();
     }
-
 
 //split -p /home/konstantinmusienko/internship/SplMerge/myVideo.avi -s 10M
 }
