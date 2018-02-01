@@ -170,5 +170,4 @@ public class ITestFileService {
         //Act
         fileService.merge(command);
     }
-
 }
