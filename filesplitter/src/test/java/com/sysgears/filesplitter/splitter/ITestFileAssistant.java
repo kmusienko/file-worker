@@ -3,7 +3,6 @@ package com.sysgears.filesplitter.splitter;
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -78,8 +77,9 @@ public class ITestFileAssistant {
         long expectedTotalSize = 0;
         for (int i = 0; i < 5; i++) {
             File file = new File(resourcePath + "/" + i + ".mp4");
-            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-            randomAccessFile.setLength(fileSize);
+            try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")) {
+                randomAccessFile.setLength(fileSize);
+            }
             files.add(file);
             expectedTotalSize += fileSize;
         }
@@ -99,8 +99,9 @@ public class ITestFileAssistant {
         long expectedTotalSize = 0;
         for (int i = 0; i < 5; i++) {
             File file = new File(resourcePath + "/" + i + ".mp4");
-            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-            randomAccessFile.setLength(fileSize);
+            try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")) {
+                randomAccessFile.setLength(fileSize);
+            }
             files.add(file);
         }
 

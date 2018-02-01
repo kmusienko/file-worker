@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -62,8 +61,6 @@ public class ITestFileService {
         final long fileSize = 1_000_000;
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw")) {
             randomAccessFile.setLength(fileSize);
-        } catch (IOException ex) {
-            Assert.fail(Arrays.toString(ex.getStackTrace()));
         }
         String[] command = {"split", "-p", filePath, "-s", "500000B"};
         final long expectedPartSize = 500_000;
@@ -87,8 +84,6 @@ public class ITestFileService {
         final long fileSize = 1_000_000;
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw")) {
             randomAccessFile.setLength(fileSize);
-        } catch (IOException ex) {
-            Assert.fail(Arrays.toString(ex.getStackTrace()));
         }
         String[] command = {"split", "-p", filePath, "-s", "400K"};
         final long expectedPartSize = 400_000;
@@ -135,8 +130,9 @@ public class ITestFileService {
         long partSize = 200_000;
         long totalSize = 0;
         for (int i = 0; i < 5; i++) {
-            RandomAccessFile randomAccessFile = new RandomAccessFile(directoryPath + "/" + i + ".avi", "rw");
-            randomAccessFile.setLength(partSize);
+            try (RandomAccessFile randomAccessFile = new RandomAccessFile(directoryPath + "/" + i + ".avi", "rw")) {
+                randomAccessFile.setLength(partSize);
+            }
             totalSize = totalSize + partSize;
         }
         String[] command = {"merge", "-p", directoryPath};

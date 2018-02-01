@@ -4,7 +4,6 @@ import com.sysgears.filesplitter.splitter.InvalidCommandException;
 import com.sysgears.filesplitter.splitter.SizeUnits;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -12,7 +11,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 import java.util.Random;
 
 public class ITestSplitCommandValidator {
@@ -44,13 +42,11 @@ public class ITestSplitCommandValidator {
     }
 
     @Test
-    public void testCheckFileExistenceIfFileExists() throws InvalidCommandException {
+    public void testCheckFileExistenceIfFileExists() throws InvalidCommandException, IOException {
         //Arrange
         String existingFilePath = resourcePath + "/existing.avi";
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(existingFilePath, "rw")) {
             randomAccessFile.setLength(1000);
-        } catch (IOException ex) {
-            Assert.fail(Arrays.toString(ex.getStackTrace()));
         }
         String[] command = {"split", "-p", existingFilePath, "-s", "10M"};
 
@@ -59,13 +55,11 @@ public class ITestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void testCheckEmptyFileIfFileIsEmpty() throws InvalidCommandException {
+    public void testCheckEmptyFileIfFileIsEmpty() throws InvalidCommandException, IOException {
         //Arrange
         String emptyFilePath = resourcePath + "/empty.avi";
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(emptyFilePath, "rw")) {
             randomAccessFile.setLength(0);
-        } catch (IOException ex) {
-            Assert.fail(Arrays.toString(ex.getStackTrace()));
         }
         String[] command = {"split", "-p", emptyFilePath, "-s", "10M"};
 
@@ -74,13 +68,11 @@ public class ITestSplitCommandValidator {
     }
 
     @Test
-    public void testCheckEmptyFileIfFileIsNotEmpty() throws InvalidCommandException {
+    public void testCheckEmptyFileIfFileIsNotEmpty() throws InvalidCommandException, IOException {
         //Arrange
         String nonemptyFilePath = resourcePath + "/nonempty.avi";
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(nonemptyFilePath, "rw")) {
             randomAccessFile.setLength(100);
-        } catch (IOException ex) {
-            Assert.fail(Arrays.toString(ex.getStackTrace()));
         }
         String[] command = {"split", "-p", nonemptyFilePath, "-s", "10M"};
 
@@ -112,17 +104,15 @@ public class ITestSplitCommandValidator {
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
-    public void testCheckCorrectPartSizeIfPartSizeMoreThanTotal() throws InvalidCommandException {
+    public void testCheckCorrectPartSizeIfPartSizeMoreThanTotal() throws InvalidCommandException, IOException {
         //Arrange
         File file = new File(resourcePath + "/original.avi");
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw")) {
             randomAccessFile.setLength(1000);
-        } catch (IOException ex) {
-            Assert.fail(Arrays.toString(ex.getStackTrace()));
         }
         String partSize = "1500B";
         String[] command = {"split", "-p", file.getPath(), "-s", partSize};
-        
+
         //Act
         splitCommandValidator.checkCorrectPartSize(command);
     }
