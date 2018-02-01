@@ -8,6 +8,6 @@ public interface StatisticsService {
 
     Map<String, Integer> calculateProgressPerSection(final Map<String, TaskReport> reports);
 
-    long calculateTimeRemaining(final long bufferTasks, final long bufferTime, final long remainingTasks);
+    long calculateTimeRemaining(final long bufferTasks, final long bufferTimeNanoSec, final long remainingTasks);
 
 }

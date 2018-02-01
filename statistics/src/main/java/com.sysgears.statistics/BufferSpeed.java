@@ -3,7 +3,7 @@ package com.sysgears.statistics;
 public class BufferSpeed {
 
     private long buffer;
-    private long time;
+    private long timeNanoSec;
 
     public long getBuffer() {
         return buffer;
@@ -13,11 +13,11 @@ public class BufferSpeed {
         this.buffer = buffer;
     }
 
-    public long getTime() {
-        return time;
+    public long getTimeNanoSec() {
+        return timeNanoSec;
     }
 
-    public void setTime(final long time) {
-        this.time = time;
+    public void setTimeNanoSec(final long time) {
+        this.timeNanoSec = time;
     }
 }

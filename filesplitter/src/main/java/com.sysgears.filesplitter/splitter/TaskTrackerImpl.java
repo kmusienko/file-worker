@@ -54,8 +54,8 @@ public class TaskTrackerImpl implements TaskTracker {
     }
 
     @Override
-    public synchronized void setBufferTime(final long time) {
-        bufferSpeed.setTime(time);
+    public synchronized void setBufferTimeNanoSec(final long time) {
+        bufferSpeed.setTimeNanoSec(time);
     }
 
     @Override
@@ -64,8 +64,8 @@ public class TaskTrackerImpl implements TaskTracker {
     }
 
     @Override
-    public synchronized long getBufferTime() {
-        return bufferSpeed.getTime();
+    public synchronized long getBufferTimeNanoSec() {
+        return bufferSpeed.getTimeNanoSec();
     }
 
 }

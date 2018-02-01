@@ -53,7 +53,7 @@ public class Transfer extends Thread {
                     alreadyRead = alreadyRead + needToRead;
                     taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length));
                     taskTracker.setBufferTasks(needToRead);
-                    taskTracker.setBufferTime(time);
+                    taskTracker.setBufferTimeNanoSec(time);
                 } else {
                     logger.trace("bufferSize < needToRead. FilePointer: " + randomAccessFromFile.getFilePointer()
                                          + this);
@@ -63,7 +63,7 @@ public class Transfer extends Thread {
                     alreadyRead = alreadyRead + bufferSize;
                     taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length));
                     taskTracker.setBufferTasks(bufferSize);
-                    taskTracker.setBufferTime(time);
+                    taskTracker.setBufferTimeNanoSec(time);
                 }
             }
         } catch (IOException ex) {

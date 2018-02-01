@@ -21,7 +21,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public long calculateTimeRemaining(final long bufferTasks, final long bufferTime, final long remainingTasks) {
-        return ((remainingTasks * bufferTime) / bufferTasks) / 1_000_000;
+    public long calculateTimeRemaining(final long bufferTasks, final long bufferTimeNanoSec, final long remainingTasks) {
+        return ((remainingTasks * bufferTimeNanoSec) / bufferTasks) / 1_000_000;
     }
 }

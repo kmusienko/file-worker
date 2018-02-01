@@ -55,7 +55,7 @@ public class ITestFileService {
     }
 
     @Test
-    public void testSplitWithEqualParts() throws InterruptedException, ExecutionException, InvalidCommandException,
+    public void testSplitIntoEqualParts() throws InterruptedException, ExecutionException, InvalidCommandException,
             IOException {
         //Arrange
         String filePath = resourcePath + "/myFile.avi";
@@ -80,7 +80,7 @@ public class ITestFileService {
     }
 
     @Test
-    public void testSplitWithNotEqualParts() throws InterruptedException, ExecutionException, InvalidCommandException,
+    public void testSplitIntoNotEqualParts() throws InterruptedException, ExecutionException, InvalidCommandException,
             IOException {
         //Arrange
         String filePath = resourcePath + "/myFile.avi";

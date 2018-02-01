@@ -20,10 +20,10 @@ public interface TaskTracker {
 
     void setBufferTasks(final long buffer);
 
-    void setBufferTime(final long time);
+    void setBufferTimeNanoSec(final long time);
 
     long getBufferTasks();
 
-    long getBufferTime();
+    long getBufferTimeNanoSec();
 
 }
