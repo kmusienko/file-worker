@@ -19,6 +19,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public int calculateProgress(final long completedTasks, final long allTasks) {
         double semiRes = (double) completedTasks / ((double) allTasks) * 100;
         long result = Math.round(semiRes);
+
         return (int) result;
     }
 
@@ -33,6 +34,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         Map<String, Integer> unitProgress = new HashMap<>();
         reports.forEach(
                 (id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
+
         return unitProgress;
     }
 

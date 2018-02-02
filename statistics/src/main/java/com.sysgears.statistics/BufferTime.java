@@ -15,6 +15,11 @@ public class BufferTime {
      */
     private long timeNanoSec;
 
+    public BufferTime(long buffer, long time) {
+        this.buffer = buffer;
+        this.timeNanoSec = time;
+    }
+
     public long getBuffer() {
         return buffer;
     }

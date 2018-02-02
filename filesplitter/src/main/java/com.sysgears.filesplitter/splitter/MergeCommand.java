@@ -1,9 +1,7 @@
 package com.sysgears.filesplitter.splitter;
 
 import com.sysgears.filesplitter.splitter.parser.MergeParamParser;
-import com.sysgears.filesplitter.splitter.parser.SplitParamParser;
 import com.sysgears.filesplitter.splitter.provider.PropertiesProvider;
-
 import com.sysgears.filesplitter.splitter.validator.CommandValidator;
 import com.sysgears.statistics.ProgressPrinter;
 import com.sysgears.statistics.TaskTracker;
@@ -12,8 +10,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,10 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-/**
- * File service.
- */
-public class FileServiceImpl implements FileService {
+public class MergeCommand implements FileCommand {
 
     /**
      * Root logger.
@@ -36,11 +29,6 @@ public class FileServiceImpl implements FileService {
      * File assistant tool.
      */
     private FileAssistant fileAssistant;
-
-    /**
-     * Split params parser.
-     */
-    private SplitParamParser splitParamParser;
 
     /**
      * Merge params parser.
@@ -70,103 +58,36 @@ public class FileServiceImpl implements FileService {
     /**
      * Command validation tool.
      */
-    private CommandValidator splitCommandValidator;
-
-    /**
-     * Command validation tool.
-     */
     private CommandValidator mergeCommandValidator;
 
-    public FileServiceImpl(FileAssistant fileAssistant, SplitParamParser splitParamParser,
-                           MergeParamParser mergeParamParser, PropertiesProvider propertiesProvider,
-                           ExecutorService fileWorkersPool, ExecutorService statisticsPool, TaskTracker taskTracker,
-                           CommandValidator splitCommandValidator, CommandValidator mergeCommandValidator,
-                           Logger logger) {
+    public MergeCommand(final Logger logger, final FileAssistant fileAssistant,
+                        final MergeParamParser mergeParamParser,
+                        final PropertiesProvider propertiesProvider, final ExecutorService fileWorkersPool,
+                        final ExecutorService statisticsPool, final TaskTracker taskTracker,
+                        final CommandValidator mergeCommandValidator) {
+        this.logger = logger;
         this.fileAssistant = fileAssistant;
-        this.splitParamParser = splitParamParser;
         this.mergeParamParser = mergeParamParser;
         this.propertiesProvider = propertiesProvider;
         this.fileWorkersPool = fileWorkersPool;
-        this.taskTracker = taskTracker;
         this.statisticsPool = statisticsPool;
-        this.splitCommandValidator = splitCommandValidator;
+        this.taskTracker = taskTracker;
         this.mergeCommandValidator = mergeCommandValidator;
-        this.logger = logger;
-    }
-
-    /**
-     * Splits file.
-     *
-     * @param args command arguments
-     * @return list of files
-     * @throws ExecutionException      if the computation threw an exception
-     * @throws InterruptedException    in case of thread interrupting
-     * @throws InvalidCommandException in case of command invalidity
-     * @throws IOException             if an I/O error occurs
-     */
-    @Override
-    public List<File> split(final String[] args) throws ExecutionException, InterruptedException,
-            InvalidCommandException, IOException {
-        splitCommandValidator.checkCommandValidity(args);
-        String userCommandStr = "\nUser command: " + Arrays.toString(args);
-        File file = new File(splitParamParser.parsePath(args));
-        long partSize = splitParamParser.parseSize(args);
-        long fileSize = file.length();
-        long numSplits = fileSize / partSize;
-        long remainingBytes = fileSize % partSize;
-        taskTracker.setTotalTasks(fileSize);
-        logger.debug("Source file size: " + fileSize + " bytes, Number of splits: " + numSplits
-                             + "Remaining bytes:" + remainingBytes + userCommandStr);
-        List<Future<?>> futures = new ArrayList<>();
-        List<File> files = new ArrayList<>();
-        logger.info("Splitting. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
-        Files.createDirectory(Paths.get(file.getParent() + "/parts"));
-        for (long i = 0; i < numSplits; i++) {
-            File partFile = new File(file.getParent() + "/parts/" + i + "."
-                                             + FilenameUtils.getExtension(file.getName()));
-            Future<?> f = fileWorkersPool.submit(new Transfer(file, i * partSize, partSize, partFile, 0,
-                                                              propertiesProvider, taskTracker, userCommandStr));
-            futures.add(f);
-            files.add(partFile);
-        }
-        if (remainingBytes > 0) {
-            logger.debug("Remaining bytes > 0. One additional file will be added." + userCommandStr);
-            File partFile = new File(file.getParent() + "/parts/" + (numSplits) + "."
-                                             + FilenameUtils.getExtension(file.getName()));
-            Future<?> f = fileWorkersPool.submit(
-                    new Transfer(file, fileSize - remainingBytes, remainingBytes, partFile, 0,
-                                 propertiesProvider, taskTracker, userCommandStr));
-            futures.add(f);
-            files.add(partFile);
-        }
-        logger.info("Executing statistics. Submitting ProgressPrinter object to the statisticsPool." + userCommandStr);
-        Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(args)));
-        futures.add(f);
-        for (Future<?> future : futures) {
-            future.get();
-        }
-        logger.debug("Splitting completed." + userCommandStr);
-        taskTracker.setTotalTasks(0);
-        taskTracker.setCompletedTasks(0);
-        taskTracker.getReportsPerSection().clear();
-        logger.debug("Statistics reset." + userCommandStr);
-
-        return files;
     }
 
     /**
      * Merges files.
      *
      * @param args command arguments
-     * @return merged file
+     * @return list with merged file
      * @throws ExecutionException      if the computation threw an exception
      * @throws InterruptedException    in case of thread interrupting
      * @throws InvalidCommandException in case of command invalidity
      * @throws IOException             if an I/O error occurs
      */
     @Override
-    public File merge(final String[] args)
-            throws IOException, ExecutionException, InterruptedException, InvalidCommandException {
+    public List<File> execute(final String[] args)
+            throws IOException, InvalidCommandException, ExecutionException, InterruptedException {
         mergeCommandValidator.checkCommandValidity(args);
         String userCommandStr = "\nUser command: " + Arrays.toString(args);
         List<File> files = mergeParamParser.parseFiles(args);
@@ -210,6 +131,9 @@ public class FileServiceImpl implements FileService {
         taskTracker.getReportsPerSection().clear();
         logger.debug("Statistics reset." + userCommandStr);
 
-        return originalFile;
+        List<File> originalFiles = new ArrayList<>();
+        originalFiles.add(originalFile);
+
+        return originalFiles;
     }
 }

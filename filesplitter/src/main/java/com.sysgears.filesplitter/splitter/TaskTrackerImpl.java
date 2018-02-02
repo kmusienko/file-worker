@@ -25,7 +25,7 @@ public class TaskTrackerImpl implements TaskTracker {
     /**
      * Represents buffer and time to read and write it.
      */
-    private BufferTime bufferTime = new BufferTime();
+    private BufferTime bufferTime = new BufferTime(0, 0);
 
     /**
      * Adds completed tasks.

@@ -29,7 +29,9 @@ import java.util.concurrent.Executors;
 public class ITestFileService {
 
     private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";
-    private FileService fileService;
+//    private FileService fileService;
+    private SplitCommand splitCommand;
+    private MergeCommand mergeCommand;
 
     @BeforeClass
     public void setUp() {
@@ -43,10 +45,15 @@ public class ITestFileService {
         MergeParamParser mergeParamParser = new MergeParamParser(logger);
         CommandValidator splitCommandValidator = new SplitCommandValidatorImpl(logger);
         CommandValidator mergeCommandValidator = new MergeCommandValidatorImpl(logger);
-        fileService = new FileServiceImpl(fileAssistant, splitParamParser, mergeParamParser,
-                                          propertiesProvider, fileWorkersPool, statisticsPool,
-                                          taskTracker, splitCommandValidator, mergeCommandValidator,
-                                          logger);
+//        fileService = new FileServiceImpl(fileAssistant, splitParamParser, mergeParamParser,
+//                                          propertiesProvider, fileWorkersPool, statisticsPool,
+//                                          taskTracker, splitCommandValidator, mergeCommandValidator,
+//                                          logger);
+        splitCommand = new SplitCommand(logger, splitParamParser, propertiesProvider, fileWorkersPool,
+                                                     statisticsPool, taskTracker, splitCommandValidator);
+        mergeCommand = new MergeCommand(logger, fileAssistant, mergeParamParser, propertiesProvider,
+                                                     fileWorkersPool, statisticsPool, taskTracker,
+                                                     mergeCommandValidator);
     }
 
     @AfterMethod
@@ -69,13 +76,13 @@ public class ITestFileService {
             random.nextBytes(randomBytes);
             randomAccessFile.write(randomBytes);
         }
-        String[] splitCommand = {"split", "-p", filePath, "-s", "150K"};
+        String[] splitArgs = {"split", "-p", filePath, "-s", "150K"};
         final int expectedPartSize = 150_000;
         final int expectedLastPartSize = 100_000;
         final int expectedFilesCount = 7;
 
         //Act
-        List<File> actualFiles = fileService.split(splitCommand);
+        List<File> actualFiles = splitCommand.execute(splitArgs);
 
         //Assert
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
@@ -93,10 +100,10 @@ public class ITestFileService {
 
         //Arrange
         String directoryPath = actualFiles.get(0).getParent();
-        String[] mergeCommand = {"merge", "-p", directoryPath};
+        String[] mergeArgs = {"merge", "-p", directoryPath};
 
         //Act
-        File mergedFile = fileService.merge(mergeCommand);
+        File mergedFile = mergeCommand.execute(mergeArgs).get(0);
 
         //Assert
         Assert.assertEquals(FileUtils.contentEquals(mergedFile, fileToSplit), true);
@@ -118,7 +125,7 @@ public class ITestFileService {
         final long expectedFilesCount = 2;
 
         //Act
-        List<File> actualFiles = fileService.split(command);
+        List<File> actualFiles = splitCommand.execute(command);
 
         //Assert
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
@@ -146,7 +153,7 @@ public class ITestFileService {
         final long expectedFilesCount = 3;
 
         //Act
-        List<File> actualFiles = fileService.split(command);
+        List<File> actualFiles = splitCommand.execute(command);
 
         //Assert
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
@@ -170,7 +177,7 @@ public class ITestFileService {
         String[] command = {"split", "something"};
 
         //Act
-        fileService.split(command);
+        splitCommand.execute(command);
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
@@ -181,7 +188,7 @@ public class ITestFileService {
         String[] command = {"split", "-p", nonExistFilePath, "-s", "10M"};
 
         //Act
-        fileService.split(command);
+        splitCommand.execute(command);
     }
 
     @Test
@@ -212,7 +219,7 @@ public class ITestFileService {
         String[] command = {"merge", "-p", directoryPath};
 
         //Act
-        File actualFile = fileService.merge(command);
+        File actualFile = mergeCommand.execute(command).get(0);
 
         //Assert
         Assert.assertEquals(actualFile.length(), totalSize);
@@ -229,7 +236,7 @@ public class ITestFileService {
         String[] command = {"merge", "-p", directoryPath};
 
         //Act
-        fileService.merge(command);
+        mergeCommand.execute(command);
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
@@ -240,6 +247,6 @@ public class ITestFileService {
         String[] command = {"merge", "-p", directoryPath};
 
         //Act
-        fileService.merge(command);
+        mergeCommand.execute(command);
     }
 }

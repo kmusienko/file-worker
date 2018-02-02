@@ -29,7 +29,7 @@ public interface StatisticsService {
      *
      * @param bufferTasks       buffer of bytes
      * @param bufferTimeNanoSec time to read and write buffer bytes (in nanoseconds)
-     * @param remainingTasks    remaining tasks
+     * @param remainingTasks    the number of remaining tasks
      * @return time remaining
      */
     long calculateTimeRemaining(final long bufferTasks, final long bufferTimeNanoSec, final long remainingTasks);

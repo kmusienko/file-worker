@@ -2,12 +2,7 @@ package com.sysgears.filesplitter;
 
 import com.sysgears.filesplitter.command.CommandExecutor;
 import com.sysgears.filesplitter.command.CommandExecutorImpl;
-import com.sysgears.filesplitter.splitter.FileAssistant;
-import com.sysgears.filesplitter.splitter.FileAssistantImpl;
-import com.sysgears.filesplitter.splitter.FileService;
-import com.sysgears.filesplitter.splitter.FileServiceImpl;
-import com.sysgears.filesplitter.splitter.InvalidCommandException;
-import com.sysgears.filesplitter.splitter.TaskTrackerImpl;
+import com.sysgears.filesplitter.splitter.*;
 import com.sysgears.filesplitter.splitter.parser.MergeParamParser;
 import com.sysgears.filesplitter.splitter.parser.SplitParamParser;
 import com.sysgears.filesplitter.splitter.provider.PropertiesProvider;
@@ -76,12 +71,12 @@ public class Runner {
         MergeParamParser mergeParamParser = new MergeParamParser(logger);
         CommandValidator splitCommandValidator = new SplitCommandValidatorImpl(logger);
         CommandValidator mergeCommandValidator = new MergeCommandValidatorImpl(logger);
-        FileService fileService = new FileServiceImpl(fileAssistant, splitParamParser, mergeParamParser,
-                                                      propertiesProvider, fileWorkersPool, statisticsPool,
-                                                      taskTracker, splitCommandValidator, mergeCommandValidator,
-                                                      logger);
-
-        CommandExecutor commandExecutor = new CommandExecutorImpl(logger, fileService);
+        FileCommand splitCommand = new SplitCommand(logger, splitParamParser, propertiesProvider, fileWorkersPool,
+                                                     statisticsPool, taskTracker, splitCommandValidator);
+        FileCommand mergeCommand = new MergeCommand(logger, fileAssistant, mergeParamParser, propertiesProvider,
+                                                     fileWorkersPool, statisticsPool, taskTracker,
+                                                     mergeCommandValidator);
+        CommandExecutor commandExecutor = new CommandExecutorImpl(logger, splitCommand, mergeCommand);
         Scanner scanner = new Scanner(System.in);
         String clientInput = "";
         while (!clientInput.equals("exit")) {
@@ -89,7 +84,6 @@ public class Runner {
             System.out.println("Enter the command:");
             clientInput = scanner.nextLine();
             logger.debug("User input: " + clientInput);
-            //     logger.debug("Executing command.");
             if (!clientInput.equals("exit")) {
                 try {
                     commandExecutor.execute(clientInput);

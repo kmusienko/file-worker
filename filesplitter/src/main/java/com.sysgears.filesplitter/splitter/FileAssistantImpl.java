@@ -33,6 +33,7 @@ public class FileAssistantImpl implements FileAssistant {
             }
         }
         randomAccessFile.close();
+
         return file;
     }
 
@@ -48,6 +49,7 @@ public class FileAssistantImpl implements FileAssistant {
         for (File file : files) {
             totalSize = totalSize + file.length();
         }
+
         return totalSize;
     }
 }
