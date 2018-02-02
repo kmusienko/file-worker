@@ -45,10 +45,10 @@ public class ITestFileService {
         CommandValidator splitCommandValidator = new SplitCommandValidatorImpl(logger);
         CommandValidator mergeCommandValidator = new MergeCommandValidatorImpl(logger);
         splitCommand = new SplitCommand(logger, splitParamParser, propertiesProvider, fileWorkersPool,
-                                                     statisticsPool, taskTracker, splitCommandValidator);
+                                        statisticsPool, taskTracker, splitCommandValidator);
         mergeCommand = new MergeCommand(logger, fileAssistant, mergeParamParser, propertiesProvider,
-                                                     fileWorkersPool, statisticsPool, taskTracker,
-                                                     mergeCommandValidator);
+                                        fileWorkersPool, statisticsPool, taskTracker,
+                                        mergeCommandValidator);
     }
 
     @AfterMethod
@@ -72,26 +72,23 @@ public class ITestFileService {
             randomAccessFile.write(randomBytes);
         }
         String[] splitArgs = {"split", "-p", filePath, "-s", "150K"};
-        final int expectedPartSize = 150_000;
-        final int expectedLastPartSize = 100_000;
-        final int expectedFilesCount = 7;
+        int expectedPartSize = 150_000;
+        int expectedLastPartSize = 100_000;
+        int expectedFilesCount = 7;
 
         //Act
         List<File> actualFiles = splitCommand.execute(splitArgs);
 
         //Assert
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
-        for (int i = 0; i < actualFiles.size() - 1; i++) {
+        for (int i = 0; i < actualFiles.size(); i++) {
+            if (i == actualFiles.size() - 1) {
+                expectedPartSize = expectedLastPartSize;
+            }
+            Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
             Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
             Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(i).getName()), fileExtension);
-            Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
         }
-        Assert.assertEquals(actualFiles.get(actualFiles.size() - 1).length(), expectedLastPartSize);
-        Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(actualFiles.size() - 1).getName()),
-                            fileExtension);
-        Assert.assertEquals(
-                Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(actualFiles.size() - 1).getName())),
-                actualFiles.size() - 1);
 
         //Arrange
         String directoryPath = actualFiles.get(0).getParent();
@@ -143,26 +140,23 @@ public class ITestFileService {
             randomAccessFile.setLength(fileSize);
         }
         String[] command = {"split", "-p", filePath, "-s", "400K"};
-        final long expectedPartSize = 400_000;
-        final long expectedLastPartSize = 200_000;
-        final long expectedFilesCount = 3;
+        long expectedPartSize = 400_000;
+        long expectedLastPartSize = 200_000;
+        long expectedFilesCount = 3;
 
         //Act
         List<File> actualFiles = splitCommand.execute(command);
 
         //Assert
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
-        for (int i = 0; i < actualFiles.size() - 1; i++) {
-            Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
+        for (int i = 0; i < actualFiles.size(); i++) {
+            if (i == actualFiles.size() - 1) {
+                expectedPartSize = expectedLastPartSize;
+            }
             Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(i).getName()), fileExtension);
+            Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
             Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
         }
-        Assert.assertEquals(actualFiles.get(actualFiles.size() - 1).length(), expectedLastPartSize);
-        Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(actualFiles.size() - 1).getName()),
-                            fileExtension);
-        Assert.assertEquals(
-                Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(actualFiles.size() - 1).getName())),
-                actualFiles.size() - 1);
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
