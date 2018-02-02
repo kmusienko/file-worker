@@ -29,7 +29,6 @@ import java.util.concurrent.Executors;
 public class ITestFileService {
 
     private final String resourcePath = System.getProperty("user.dir") + "/src/test/resources/files";
-//    private FileService fileService;
     private SplitCommand splitCommand;
     private MergeCommand mergeCommand;
 
@@ -45,10 +44,6 @@ public class ITestFileService {
         MergeParamParser mergeParamParser = new MergeParamParser(logger);
         CommandValidator splitCommandValidator = new SplitCommandValidatorImpl(logger);
         CommandValidator mergeCommandValidator = new MergeCommandValidatorImpl(logger);
-//        fileService = new FileServiceImpl(fileAssistant, splitParamParser, mergeParamParser,
-//                                          propertiesProvider, fileWorkersPool, statisticsPool,
-//                                          taskTracker, splitCommandValidator, mergeCommandValidator,
-//                                          logger);
         splitCommand = new SplitCommand(logger, splitParamParser, propertiesProvider, fileWorkersPool,
                                                      statisticsPool, taskTracker, splitCommandValidator);
         mergeCommand = new MergeCommand(logger, fileAssistant, mergeParamParser, propertiesProvider,
