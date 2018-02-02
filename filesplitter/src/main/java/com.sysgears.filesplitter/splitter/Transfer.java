@@ -101,7 +101,7 @@ public class Transfer extends Thread {
                 if (bufferSize >= needToRead) {
                     logger.trace("bufferSize >= needToRead. FilePointer: " + randomAccessFromFile.getFilePointer()
                                          + this);
-                    long time = readAndWrite(randomAccessFromFile, randomAccessToFile, needToRead);
+                    long time = copy(randomAccessFromFile, randomAccessToFile, needToRead);
                     taskTracker.addCompletedTasks(needToRead);
                     alreadyRead = alreadyRead + needToRead;
                     taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length));
@@ -110,7 +110,7 @@ public class Transfer extends Thread {
                 } else {
                     logger.trace("bufferSize < needToRead. FilePointer: " + randomAccessFromFile.getFilePointer()
                                          + this);
-                    long time = readAndWrite(randomAccessFromFile, randomAccessToFile, bufferSize);
+                    long time = copy(randomAccessFromFile, randomAccessToFile, bufferSize);
                     needToRead = needToRead - bufferSize;
                     taskTracker.addCompletedTasks(bufferSize);
                     alreadyRead = alreadyRead + bufferSize;
@@ -134,8 +134,8 @@ public class Transfer extends Thread {
      * @return spent time in nanoseconds
      * @throws IOException if an I/O error occurs
      */
-    private long readAndWrite(RandomAccessFile randomAccessFromFile, RandomAccessFile randomAccessToFile,
-                              long bufferSize) throws IOException {
+    private long copy(RandomAccessFile randomAccessFromFile, RandomAccessFile randomAccessToFile,
+                      long bufferSize) throws IOException {
         byte[] buffer = new byte[(int) bufferSize];
         long startTime = System.nanoTime();
         logger.trace("StartTime: " + startTime + this);
