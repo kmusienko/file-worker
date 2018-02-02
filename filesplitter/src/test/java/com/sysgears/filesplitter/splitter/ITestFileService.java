@@ -8,18 +8,17 @@ import com.sysgears.filesplitter.splitter.validator.MergeCommandValidatorImpl;
 import com.sysgears.filesplitter.splitter.validator.SplitCommandValidatorImpl;
 import com.sysgears.statistics.TaskTracker;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,10 +56,59 @@ public class ITestFileService {
     }
 
     @Test
+    public void testSplitMerge() throws IOException, InterruptedException, ExecutionException, InvalidCommandException {
+        //Arrange
+        String fileName = "myFile";
+        String fileExtension = "avi";
+        String filePath = resourcePath + "/" + fileName + "." + fileExtension;
+        File fileToSplit = new File(filePath);
+        final int fileSize = 1_000_000;
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(fileToSplit, "rw")) {
+            byte[] randomBytes = new byte[fileSize];
+            Random random = new Random();
+            random.nextBytes(randomBytes);
+            randomAccessFile.write(randomBytes);
+        }
+        String[] splitCommand = {"split", "-p", filePath, "-s", "150K"};
+        final int expectedPartSize = 150_000;
+        final int expectedLastPartSize = 100_000;
+        final int expectedFilesCount = 7;
+
+        //Act
+        List<File> actualFiles = fileService.split(splitCommand);
+
+        //Assert
+        Assert.assertEquals(actualFiles.size(), expectedFilesCount);
+        for (int i = 0; i < actualFiles.size() - 1; i++) {
+            Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
+            Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(i).getName()), fileExtension);
+            Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
+        }
+        Assert.assertEquals(actualFiles.get(actualFiles.size() - 1).length(), expectedLastPartSize);
+        Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(actualFiles.size() - 1).getName()),
+                            fileExtension);
+        Assert.assertEquals(
+                Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(actualFiles.size() - 1).getName())),
+                actualFiles.size() - 1);
+
+        //Arrange
+        String directoryPath = actualFiles.get(0).getParent();
+        String[] mergeCommand = {"merge", "-p", directoryPath};
+
+        //Act
+        File mergedFile = fileService.merge(mergeCommand);
+
+        //Assert
+        Assert.assertEquals(FileUtils.contentEquals(mergedFile, fileToSplit), true);
+    }
+
+    @Test
     public void testSplitIntoEqualParts() throws InterruptedException, ExecutionException, InvalidCommandException,
             IOException {
         //Arrange
-        String filePath = resourcePath + "/myFile.avi";
+        String fileName = "myFile";
+        String fileExtension = "avi";
+        String filePath = resourcePath + "/" + fileName + "." + fileExtension;
         final long fileSize = 1_000_000;
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw")) {
             randomAccessFile.setLength(fileSize);
@@ -74,8 +122,11 @@ public class ITestFileService {
 
         //Assert
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
-        for (File actualFile : actualFiles) {
-            Assert.assertEquals(actualFile.length(), expectedPartSize);
+        for (int i = 0; i < actualFiles.size(); i++) {
+            Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
+            Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(i).getName()), fileExtension);
+            Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
+
         }
     }
 
@@ -83,7 +134,9 @@ public class ITestFileService {
     public void testSplitIntoNotEqualParts() throws InterruptedException, ExecutionException, InvalidCommandException,
             IOException {
         //Arrange
-        String filePath = resourcePath + "/myFile.avi";
+        String fileName = "myFile";
+        String fileExtension = "avi";
+        String filePath = resourcePath + "/" + fileName + "." + fileExtension;
         final long fileSize = 1_000_000;
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "rw")) {
             randomAccessFile.setLength(fileSize);
@@ -100,15 +153,22 @@ public class ITestFileService {
         Assert.assertEquals(actualFiles.size(), expectedFilesCount);
         for (int i = 0; i < actualFiles.size() - 1; i++) {
             Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
+            Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(i).getName()), fileExtension);
+            Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
         }
         Assert.assertEquals(actualFiles.get(actualFiles.size() - 1).length(), expectedLastPartSize);
+        Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(actualFiles.size() - 1).getName()),
+                            fileExtension);
+        Assert.assertEquals(
+                Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(actualFiles.size() - 1).getName())),
+                actualFiles.size() - 1);
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
     public void testFailToSplitIfArgumentsAreInvalid()
             throws InterruptedException, ExecutionException, InvalidCommandException, IOException {
         //Arrange
-        String[] command = {"split","something"};
+        String[] command = {"split", "something"};
 
         //Act
         fileService.split(command);
@@ -130,13 +190,25 @@ public class ITestFileService {
         //Arrange
         String directoryPath = resourcePath + "/parts";
         Files.createDirectory(Paths.get(directoryPath));
+        String fileExtension = "avi";
         long partSize = 200_000;
         long totalSize = 0;
         for (int i = 0; i < 5; i++) {
-            try (RandomAccessFile randomAccessFile = new RandomAccessFile(directoryPath + "/" + i + ".avi", "rw")) {
+            try (RandomAccessFile randomAccessFile = new RandomAccessFile(directoryPath + "/" + i + "."
+                                                                                  + fileExtension, "rw")) {
                 randomAccessFile.setLength(partSize);
             }
             totalSize = totalSize + partSize;
+        }
+        File expectedContent = new File(resourcePath + "/expected.avi");
+        File directory = new File(directoryPath);
+        List<File> files = Arrays.asList(Objects.requireNonNull(directory.listFiles()));
+        files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
+        try (FileOutputStream fos = new FileOutputStream(expectedContent);
+             BufferedOutputStream mergingStream = new BufferedOutputStream(fos)) {
+            for (File file : files) {
+                Files.copy(file.toPath(), mergingStream);
+            }
         }
         String[] command = {"merge", "-p", directoryPath};
 
@@ -145,6 +217,8 @@ public class ITestFileService {
 
         //Assert
         Assert.assertEquals(actualFile.length(), totalSize);
+        Assert.assertEquals(FilenameUtils.getExtension(actualFile.getName()), fileExtension);
+        Assert.assertEquals(FileUtils.contentEquals(actualFile, expectedContent), true);
     }
 
     @Test(expectedExceptions = InvalidCommandException.class)
