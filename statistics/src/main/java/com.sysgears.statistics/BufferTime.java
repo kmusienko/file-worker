@@ -1,17 +1,17 @@
 package com.sysgears.statistics;
 
 /**
- * Represents buffer and time to read and write it.
+ * Represents buffer tasks and time to do them.
  */
 public class BufferTime {
 
     /**
-     * Buffer of bytes.
+     * Buffer of tasks.
      */
     private long buffer;
 
     /**
-     * Time to read and write buffer bytes (in nanoseconds).
+     * Time to do buffer tasks (in nanoseconds).
      */
     private long timeNanoSec;
 

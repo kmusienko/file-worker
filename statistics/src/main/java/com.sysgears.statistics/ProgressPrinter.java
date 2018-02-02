@@ -15,11 +15,6 @@ public class ProgressPrinter extends Thread {
     private static final Logger logger = Logger.getLogger("stat-logs");
 
     /**
-     * Name of the current thread.
-     */
-    private final String threadName = Thread.currentThread().getName();
-
-    /**
      * Statistics service.
      */
     private StatisticsService statisticsService = new StatisticsServiceImpl();
@@ -54,7 +49,7 @@ public class ProgressPrinter extends Thread {
         int totalProgress = 0;
         while (totalProgress < 100) {
             try {
-                sleep(800);
+                sleep(400);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -82,11 +77,8 @@ public class ProgressPrinter extends Thread {
     @Override
     public String toString() {
         return "ProgressPrinter{" +
-                "threadName='" + threadName + '\'' +
+                "threadName='" + Thread.currentThread().getName() + '\'' +
                 ", command='" + command + '\'' +
                 '}';
     }
 }
-//split -p /home/konstantinmusienko/internship/SplMerge/myVideo.avi -s 10M
-//split -p /home/konstantinmusienko/internship/SplMerge/huge.mp4 -s 1000M
-//merge -p /home/konstantinmusienko/internship/SplMerge/parts

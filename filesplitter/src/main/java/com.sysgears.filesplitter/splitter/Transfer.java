@@ -20,11 +20,6 @@ public class Transfer extends Thread {
     private static final Logger logger = Logger.getLogger("transfer-logs");
 
     /**
-     * Current thread name.
-     */
-    private final String threadName = Thread.currentThread().getName();
-
-    /**
      * File from which to transfer the bytes.
      */
     private File fromFile;
@@ -93,6 +88,7 @@ public class Transfer extends Thread {
      */
     @Override
     public void run() {
+        final String threadName = Thread.currentThread().getName();
         logger.trace("Transfer started." + this);
         try (RandomAccessFile randomAccessFromFile = new RandomAccessFile(fromFile, "r");
              RandomAccessFile randomAccessToFile = new RandomAccessFile(toFile, "rw")) {
@@ -153,7 +149,7 @@ public class Transfer extends Thread {
     @Override
     public String toString() {
         return "Transfer{" +
-                "threadName='" + threadName + '\'' +
+                "threadName='" + Thread.currentThread().getName() + '\'' +
                 ", fromFile=" + fromFile +
                 ", fromFileOffset=" + fromFileOffset +
                 ", length=" + length +
