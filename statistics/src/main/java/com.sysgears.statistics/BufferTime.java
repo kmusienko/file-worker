@@ -1,7 +1,7 @@
 package com.sysgears.statistics;
 
 /**
- * Represents buffer tasks and time to do them.
+ * Represents buffer tasks and time to do them. It is used to calculate time remaining.
  */
 public class BufferTime {
 

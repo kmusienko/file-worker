@@ -126,7 +126,6 @@ public class ITestFileService {
             Assert.assertEquals(actualFiles.get(i).length(), expectedPartSize);
             Assert.assertEquals(FilenameUtils.getExtension(actualFiles.get(i).getName()), fileExtension);
             Assert.assertEquals(Integer.parseInt(FilenameUtils.getBaseName(actualFiles.get(i).getName())), i);
-
         }
     }
 
